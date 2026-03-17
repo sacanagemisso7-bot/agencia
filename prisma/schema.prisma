@@ -1,0 +1,435 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  ACCOUNT_MANAGER
+  CLIENT
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  MEETING_SCHEDULED
+  PROPOSAL_SENT
+  NEGOTIATION
+  WON
+  LOST
+}
+
+enum ContractStatus {
+  PENDING
+  ACTIVE
+  PAUSED
+  ENDED
+}
+
+enum ProposalStatus {
+  DRAFT
+  SENT
+  VIEWED
+  ACCEPTED
+  REJECTED
+  EXPIRED
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  REVIEW
+  DONE
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum CampaignPlatform {
+  META
+  GOOGLE
+  LINKEDIN
+  TIKTOK
+  OTHER
+}
+
+enum CampaignStatus {
+  PLANNING
+  ACTIVE
+  OPTIMIZING
+  PAUSED
+  COMPLETED
+}
+
+enum MessageStatus {
+  DRAFT
+  QUEUED
+  SENT
+  FAILED
+}
+
+enum MessageChannel {
+  EMAIL
+  WHATSAPP
+  INTERNAL
+  SMS
+}
+
+enum AIRequestMode {
+  TEXT_ONLY
+  SAVE_DRAFT
+  AUTO_SEND
+  GENERATE_PROPOSAL
+  CREATE_TASK
+  INTERNAL_SUMMARY
+}
+
+enum AIRequestStatus {
+  PENDING
+  GENERATED
+  APPROVED
+  SENT
+  FAILED
+}
+
+enum FinancialEntryType {
+  CONTRACT
+  INVOICE
+  PAYMENT
+  ADJUSTMENT
+}
+
+enum FinancialStatus {
+  PENDING
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
+model User {
+  id              String        @id @default(cuid())
+  name            String
+  email           String        @unique
+  passwordHash    String
+  role            UserRole      @default(ADMIN)
+  avatarUrl       String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  assignedLeads   Lead[]        @relation("LeadOwner")
+  proposals       Proposal[]    @relation("ProposalAuthor")
+  tasks           Task[]        @relation("TaskOwner")
+  messages        Message[]     @relation("MessageAuthor")
+  aiRequests      AIRequest[]   @relation("AIRequestAuthor")
+  activityLogs    ActivityLog[] @relation("ActivityActor")
+}
+
+model Lead {
+  id              String        @id @default(cuid())
+  name            String
+  email           String
+  phone           String?
+  company         String?
+  niche           String?
+  objective       String?
+  message         String?
+  source          String        @default("site")
+  status          LeadStatus    @default(NEW)
+  tags            String[]
+  notes           String?
+  estimatedTicket Decimal?      @db.Decimal(10, 2)
+  ownerId         String?
+  owner           User?         @relation("LeadOwner", fields: [ownerId], references: [id])
+  convertedClient Client?
+  tasks           Task[]
+  proposals       Proposal[]
+  messages        Message[]
+  aiRequests      AIRequest[]
+  attachments     Attachment[]
+  activityLogs    ActivityLog[]
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([status, createdAt])
+}
+
+model Client {
+  id                  String           @id @default(cuid())
+  name                String
+  companyName         String
+  email               String
+  phone               String?
+  niche               String?
+  goals               String?
+  monthlyTicket       Decimal?         @db.Decimal(10, 2)
+  contractStatus      ContractStatus   @default(PENDING)
+  activeChannels      String[]
+  notes               String?
+  websiteUrl          String?
+  convertedFromLeadId String?      @unique
+  convertedFromLead   Lead?            @relation(fields: [convertedFromLeadId], references: [id])
+  campaigns           Campaign[]
+  proposals           Proposal[]
+  tasks               Task[]
+  messages            Message[]
+  aiRequests          AIRequest[]
+  financialEntries    FinancialEntry[]
+  attachments         Attachment[]
+  activityLogs        ActivityLog[]
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  @@index([contractStatus, createdAt])
+}
+
+model Proposal {
+  id            String         @id @default(cuid())
+  title         String
+  summary       String
+  scope         String
+  price         Decimal        @db.Decimal(10, 2)
+  status        ProposalStatus @default(DRAFT)
+  validUntil    DateTime?
+  clientId      String?
+  client        Client?        @relation(fields: [clientId], references: [id])
+  leadId        String?
+  lead          Lead?          @relation(fields: [leadId], references: [id])
+  createdById   String?
+  createdBy     User?          @relation("ProposalAuthor", fields: [createdById], references: [id])
+  attachments   Attachment[]
+  activityLogs  ActivityLog[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@index([status, createdAt])
+}
+
+model Task {
+  id            String       @id @default(cuid())
+  title         String
+  description   String?
+  status        TaskStatus   @default(TODO)
+  priority      TaskPriority @default(MEDIUM)
+  dueDate       DateTime?
+  checklist     Json?
+  ownerId       String?
+  owner         User?        @relation("TaskOwner", fields: [ownerId], references: [id])
+  clientId      String?
+  client        Client?      @relation(fields: [clientId], references: [id])
+  leadId        String?
+  lead          Lead?        @relation(fields: [leadId], references: [id])
+  activityLogs  ActivityLog[]
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  @@index([status, priority, dueDate])
+}
+
+model Campaign {
+  id              String           @id @default(cuid())
+  name            String
+  objective       String
+  platform        CampaignPlatform
+  budget          Decimal?         @db.Decimal(10, 2)
+  status          CampaignStatus   @default(PLANNING)
+  metrics         Json?
+  notes           String?
+  clientId        String
+  client          Client           @relation(fields: [clientId], references: [id])
+  activityLogs    ActivityLog[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  @@index([status, platform, createdAt])
+}
+
+model Message {
+  id             String         @id @default(cuid())
+  subject        String?
+  body           String
+  channel        MessageChannel @default(EMAIL)
+  status         MessageStatus  @default(DRAFT)
+  recipientName  String?
+  recipientEmail String?
+  recipientPhone String?
+  scheduledFor   DateTime?
+  sentAt         DateTime?
+  providerName   String?
+  providerMessageId String?
+  deliveryNote   String?
+  clientId       String?
+  client         Client?        @relation(fields: [clientId], references: [id])
+  leadId         String?
+  lead           Lead?          @relation(fields: [leadId], references: [id])
+  aiRequestId    String?
+  aiRequest      AIRequest?     @relation(fields: [aiRequestId], references: [id])
+  createdById    String?
+  createdBy      User?          @relation("MessageAuthor", fields: [createdById], references: [id])
+  activityLogs   ActivityLog[]
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  @@index([status, channel, createdAt])
+  @@index([providerMessageId])
+}
+
+model AIRequest {
+  id              String          @id @default(cuid())
+  input           String
+  objective       String?
+  tone            String?
+  responseSize    String?
+  mode            AIRequestMode
+  status          AIRequestStatus @default(PENDING)
+  generatedText   String?
+  error           String?
+  clientId        String?
+  client          Client?         @relation(fields: [clientId], references: [id])
+  leadId          String?
+  lead            Lead?           @relation(fields: [leadId], references: [id])
+  createdById     String?
+  createdBy       User?           @relation("AIRequestAuthor", fields: [createdById], references: [id])
+  messages        Message[]
+  activityLogs    ActivityLog[]
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@index([mode, status, createdAt])
+}
+
+model ActivityLog {
+  id          String   @id @default(cuid())
+  action      String
+  entityType  String
+  entityId    String?
+  description String
+  metadata    Json?
+  actorId     String?
+  actor       User?    @relation("ActivityActor", fields: [actorId], references: [id])
+  leadId      String?
+  lead        Lead?    @relation(fields: [leadId], references: [id])
+  clientId    String?
+  client      Client?  @relation(fields: [clientId], references: [id])
+  proposalId  String?
+  proposal    Proposal? @relation(fields: [proposalId], references: [id])
+  taskId      String?
+  task        Task?    @relation(fields: [taskId], references: [id])
+  campaignId  String?
+  campaign    Campaign? @relation(fields: [campaignId], references: [id])
+  messageId   String?
+  message     Message? @relation(fields: [messageId], references: [id])
+  aiRequestId String?
+  aiRequest   AIRequest? @relation(fields: [aiRequestId], references: [id])
+  createdAt   DateTime @default(now())
+
+  @@index([entityType, createdAt])
+}
+
+model FinancialEntry {
+  id          String             @id @default(cuid())
+  title       String
+  description String?
+  type        FinancialEntryType
+  status      FinancialStatus    @default(PENDING)
+  amount      Decimal            @db.Decimal(10, 2)
+  dueDate     DateTime?
+  paidAt      DateTime?
+  reference   String?
+  clientId    String
+  client      Client             @relation(fields: [clientId], references: [id])
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  @@index([clientId, status, dueDate])
+}
+
+model Attachment {
+  id          String    @id @default(cuid())
+  title       String
+  fileName    String
+  fileUrl     String
+  mimeType    String?
+  sizeBytes   Int?
+  notes       String?
+  clientId    String?
+  client      Client?   @relation(fields: [clientId], references: [id])
+  leadId      String?
+  lead        Lead?     @relation(fields: [leadId], references: [id])
+  proposalId  String?
+  proposal    Proposal? @relation(fields: [proposalId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([clientId, proposalId, leadId, createdAt])
+}
+
+model Testimonial {
+  id         String   @id @default(cuid())
+  authorName String
+  role       String
+  company    String
+  quote      String
+  featured   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model CaseStudy {
+  id           String   @id @default(cuid())
+  title        String
+  niche        String
+  challenge    String
+  solution     String
+  result       String
+  metrics      Json?
+  featured     Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Service {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String
+  benefit     String
+  featured    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model FAQ {
+  id         String   @id @default(cuid())
+  question   String
+  answer     String
+  order      Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model BlogPost {
+  id           String   @id @default(cuid())
+  title        String
+  slug         String   @unique
+  excerpt      String
+  content      String
+  category     String
+  publishedAt  DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model SiteSetting {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       Json
+  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now())
+}

@@ -1,0 +1,35 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: agencia
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - postgres
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/agencia?schema=public
+      AUTH_SECRET: change-me
+      NEXTAUTH_SECRET: change-me
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+      ADMIN_EMAIL: admin@agencia-premium.com
+      ADMIN_PASSWORD: Admin123!
+      AI_PROVIDER: mock
+      QUEUE_SECRET: change-me
+      UPLOAD_DIR: public/uploads
+
+volumes:
+  postgres_data:
+

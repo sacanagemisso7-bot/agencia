@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - "codex/**"
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma client
+        run: npm run db:generate
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/agencia?schema=public
+
+      - name: Build app
+        run: npm run build
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/agencia?schema=public
+          AUTH_SECRET: ci-secret
+          NEXTAUTH_SECRET: ci-secret
+          NEXT_PUBLIC_APP_URL: http://localhost:3000
+          ADMIN_EMAIL: admin@agencia-premium.com
+          ADMIN_PASSWORD: Admin123!
+          AI_PROVIDER: mock
+          QUEUE_SECRET: ci-secret
