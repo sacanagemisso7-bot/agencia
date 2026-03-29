@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 import { buildCalendarEmbedUrl, toWhatsAppHref } from "@/lib/contact";
 
 export function SchedulingEmbedSection({
-  title = "Agende uma conversa estrategica sem esperar retorno manual.",
-  description = "Se o seu momento pede velocidade, voce pode reservar um horario direto na agenda da equipe e entrar na fila de atendimento com contexto comercial.",
+  title = "Agende uma conversa estratégica sem esperar retorno manual.",
+  description = "Se o seu momento pede velocidade, você pode reservar um horário direto na agenda da equipe e entrar na fila de atendimento com contexto comercial.",
   calendarUrl,
   calendarEmbedUrl,
   whatsapp,
@@ -33,7 +33,7 @@ export function SchedulingEmbedSection({
               {
                 icon: Clock3,
                 title: "Fila comercial organizada",
-                text: "Leads que pedem reuniao entram com prioridade e contexto no admin da agencia.",
+                text: "Leads que pedem reunião entram com prioridade e contexto no admin da agência.",
               },
               {
                 icon: CalendarDays,
@@ -42,7 +42,7 @@ export function SchedulingEmbedSection({
               },
               {
                 icon: MessageCircleMore,
-                title: "Canal alternativo rapido",
+                title: "Canal alternativo rápido",
                 text: "Se preferir, o mesmo fluxo pode ser acelerado por WhatsApp com a equipe.",
               },
             ].map((item) => (
@@ -77,7 +77,8 @@ export function SchedulingEmbedSection({
             />
           ) : (
             <div className="flex min-h-[540px] items-center justify-center rounded-[28px] border border-dashed border-mist-100/12 bg-[linear-gradient(180deg,rgba(10,19,36,0.92),rgba(6,12,24,0.92))] p-8 text-center text-sm leading-7 text-mist-100/58">
-              Configure `calendarUrl` ou `calendarEmbedUrl` no CMS para embutir a agenda aqui.
+              A agenda direta está sendo configurada. Se preferir acelerar, fale no WhatsApp e alinhamos o melhor
+              horário por lá.
             </div>
           )}
         </div>

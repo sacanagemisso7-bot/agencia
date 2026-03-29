@@ -44,7 +44,7 @@ export const demoAdminUser: UserSession = {
 export const demoAccountManagerUser: UserSession = {
   id: "user_manager_1",
   name: "Caio Martins",
-  email: "caio@atlasgrowth.studio",
+  email: "caio@ameni.digital",
   role: "ACCOUNT_MANAGER",
 };
 
@@ -55,13 +55,13 @@ export const demoSettings: SiteSettingsRecord = {
     "A Ameni conduz tráfego pago, orgânico, social media, conteúdo, web e posicionamento para transformar marketing em uma operação mais clara, elegante e orientada a resultado.",
   primaryCta: "Solicitar diagnóstico",
   secondaryCta: "Agendar reunião",
-  email: "contato@atlasgrowth.studio",
+  email: "contato@ameni.digital",
   phone: "+55 11 4000-1234",
   whatsapp: "+55 11 98888-0000",
   calendarUrl: "",
   calendarEmbedUrl: "",
-  instagramUrl: "https://instagram.com/atlasgrowth.studio",
-  linkedinUrl: "https://linkedin.com/company/atlas-growth-studio",
+  instagramUrl: "",
+  linkedinUrl: "",
 };
 
 export const demoServices: ServiceRecord[] = [
@@ -1055,7 +1055,7 @@ export const demoAutomationSettings: AutomationSettingsRecord = {
   leadReminderDelayHours: 3,
   proposalFollowUpAfterDays: 3,
   proposalFollowUpChannel: "EMAIL",
-  internalAlertRecipients: "admin@agencia-premium.com, comercial@atlasgrowth.studio",
+  internalAlertRecipients: "admin@ameni.digital, comercial@ameni.digital",
 };
 
 export function createDemoSnapshot() {

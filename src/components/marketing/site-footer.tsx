@@ -32,6 +32,11 @@ export function SiteFooter({
   const brandName = resolveAgencyName(agencyName);
   const { effectiveTheme } = useMarketingTheme();
   const light = effectiveTheme === "light";
+  const socialLinks = [
+    { href: instagramUrl, label: "Instagram" },
+    { href: linkedinUrl, label: "LinkedIn" },
+  ].filter((item) => item.href);
+  const contactItems = [email, phone, whatsapp, "São Paulo, Brasil"].filter(Boolean);
 
   return (
     <footer className={cn("mt-24", light ? "border-t border-emerald-700/10 text-emerald-950" : "border-t border-mist-100/10 bg-[#030811] text-white")}>
@@ -57,16 +62,22 @@ export function SiteFooter({
                 {getBrandSlogan()}. Estratégia, tráfego, conteúdo, social media, web e posicionamento em uma operação
                 pensada para reduzir ruído, simplificar decisões e acelerar resultado.
               </p>
-              <div className={cn("mt-7 flex flex-wrap gap-3 text-sm", light ? "text-emerald-950/64" : "text-mist-100/64")}>
-                <Link className={cn("inline-flex items-center gap-2 transition", light ? "hover:text-emerald-950" : "hover:text-white")} href={instagramUrl} rel="noreferrer" target="_blank">
-                  Instagram
-                  <ArrowUpRight className="size-4" />
-                </Link>
-                <Link className={cn("inline-flex items-center gap-2 transition", light ? "hover:text-emerald-950" : "hover:text-white")} href={linkedinUrl} rel="noreferrer" target="_blank">
-                  LinkedIn
-                  <ArrowUpRight className="size-4" />
-                </Link>
-              </div>
+              {socialLinks.length ? (
+                <div className={cn("mt-7 flex flex-wrap gap-3 text-sm", light ? "text-emerald-950/64" : "text-mist-100/64")}>
+                  {socialLinks.map((item) => (
+                    <Link
+                      className={cn("inline-flex items-center gap-2 transition", light ? "hover:text-emerald-950" : "hover:text-white")}
+                      href={item.href}
+                      key={item.label}
+                      rel="noreferrer"
+                      target="_blank"
+                    >
+                      {item.label}
+                      <ArrowUpRight className="size-4" />
+                    </Link>
+                  ))}
+                </div>
+              ) : null}
               <Link
                 className={cn(
                   "mt-8 inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-medium transition",
@@ -106,10 +117,9 @@ export function SiteFooter({
             <div>
               <p className={cn("text-[11px] font-semibold uppercase tracking-[0.3em]", light ? "text-emerald-950/34" : "text-mist-100/32")}>Contato</p>
               <div className={cn("mt-6 space-y-3 text-sm", light ? "text-emerald-950/64" : "text-mist-100/60")}>
-                <p>{email}</p>
-                <p>{phone}</p>
-                <p>{whatsapp}</p>
-                <p>São Paulo, Brasil</p>
+                {contactItems.map((item) => (
+                  <p key={item}>{item}</p>
+                ))}
               </div>
             </div>
           </div>

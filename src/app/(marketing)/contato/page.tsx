@@ -12,7 +12,7 @@ import { getSiteContent } from "@/modules/site-content/repository";
 export const metadata: Metadata = buildPageMetadata({
   title: "Contato | Ameni",
   description:
-    "Solicite um diagnostico estrategico da sua marca e entenda como growth, conteudo, video, web e branding podem operar juntos.",
+    "Solicite um diagnóstico estratégico da sua marca e entenda como tráfego, conteúdo, vídeo, web e posicionamento podem operar juntos.",
   path: "/contato",
 });
 
@@ -51,16 +51,16 @@ export default async function ContatoPage({
           name: `${getSiteName()} | Contato`,
           url: getAbsoluteUrl("/contato"),
           description:
-            "Pagina de contato com formulario de diagnostico, agenda embutida e canais diretos da Ameni.",
+            "Página de contato com formulário de diagnóstico, agenda embutida e canais diretos da Ameni.",
         }}
         id="contact-page-schema"
       />
       <PageToast message={query?.success === "1" ? "Recebemos seu contato e o lead entrou no CRM." : undefined} />
       <PageHero
-        aside="Se fizer sentido, nos envie contexto sobre ticket, canal principal, objetivo de crescimento e o que voce sente que hoje esta travando a operacao."
-        description="Conte rapidamente o momento da empresa e devolvemos uma leitura inicial sobre posicionamento, canais, estrutura e proximos passos."
+        aside="Se fizer sentido, nos envie contexto sobre ticket, canal principal, objetivo de crescimento e o que você sente que hoje está travando a operação."
+        description="Conte rapidamente o momento da empresa e devolvemos uma leitura inicial sobre posicionamento, canais, estrutura e próximos passos."
         eyebrow="Contato"
-        title="Vamos desenhar um diagnostico comercial e estrategico para a sua marca."
+        title="Vamos desenhar um diagnóstico comercial e estratégico para a sua marca."
       />
 
       <section className="container-shell py-12 sm:py-16">
@@ -72,7 +72,7 @@ export default async function ContatoPage({
                   ? content.settings.email
                   : item.field === "phone"
                     ? content.settings.phone
-                    : "Resposta inicial em ate 1 dia util";
+                    : "Resposta inicial em até 1 dia útil";
 
               return (
                 <article className="rounded-[28px] border border-white/10 bg-white/[0.04] p-6" key={item.label}>

@@ -19,16 +19,16 @@ const marketingSettingsSeed = {
   agencyName: "Ameni",
   heroTitle: "Amenize a complexidade potencialize seus resultados",
   heroSubtitle:
-    "A Ameni integra estrategia, performance, conteudo, web e automacao para simplificar a operacao, reduzir ruido e acelerar resultados com mais clareza.",
-  primaryCta: "Solicitar diagnostico",
-  secondaryCta: "Agendar reuniao",
-  email: "contato@atlasgrowth.studio",
+    "A Ameni integra estratégia, tráfego, conteúdo, social media, web e posicionamento para simplificar a operação, reduzir ruído e acelerar resultados com mais clareza.",
+  primaryCta: "Solicitar diagnóstico",
+  secondaryCta: "Agendar reunião",
+  email: "contato@ameni.digital",
   phone: "+55 11 4000-1234",
   whatsapp: "+55 11 98888-0000",
-  calendarUrl: "https://calendly.com/atlasgrowth/diagnostico-estrategico",
-  calendarEmbedUrl: "https://calendly.com/atlasgrowth/diagnostico-estrategico",
-  instagramUrl: "https://instagram.com/atlasgrowth.studio",
-  linkedinUrl: "https://linkedin.com/company/atlas-growth-studio",
+  calendarUrl: "",
+  calendarEmbedUrl: "",
+  instagramUrl: "",
+  linkedinUrl: "",
 } as const;
 
 const prisma = new PrismaClient();
@@ -50,11 +50,11 @@ async function main() {
   });
 
   await prisma.user.upsert({
-    where: { email: "caio@atlasgrowth.studio" },
+    where: { email: "caio@ameni.digital" },
     update: {},
     create: {
       name: "Caio Martins",
-      email: "caio@atlasgrowth.studio",
+      email: "caio@ameni.digital",
       passwordHash,
       role: UserRole.ACCOUNT_MANAGER,
     },
@@ -268,8 +268,8 @@ async function main() {
   await prisma.financialEntry.createMany({
     data: [
       {
-        title: "Mensalidade Atlas OS - Marco",
-        description: "Retainer mensal de performance e operacao comercial.",
+        title: "Mensalidade Ameni Digital Marketing - Março",
+        description: "Retainer mensal de performance e operação comercial.",
         type: "INVOICE",
         status: "PENDING",
         amount: 6800,

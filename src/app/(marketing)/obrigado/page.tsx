@@ -10,7 +10,7 @@ import { getSiteContent } from "@/modules/site-content/repository";
 
 export const metadata: Metadata = buildNoIndexMetadata(
   "Obrigado | Ameni",
-  "Confirmacao de envio do diagnostico solicitado no site.",
+  "Confirmação de envio do diagnóstico solicitado no site.",
 );
 
 export default async function ObrigadoPage({
@@ -24,10 +24,10 @@ export default async function ObrigadoPage({
   return (
     <main>
       <PageHero
-        aside="Seu pedido entrou no CRM da agencia com contexto comercial, interesse de servico, atribuicao de origem e uma resposta automatica registrada no historico."
-        description="Recebemos seu contato. Agora o proximo passo e analisar o momento da marca e devolver uma direcao inicial clara."
+        aside="Seu pedido entrou no CRM da agência com contexto comercial, interesse de serviço, atribuição de origem e uma resposta automática registrada no histórico."
+        description="Recebemos seu contato. Agora o próximo passo é analisar o momento da marca e devolver uma direção inicial clara."
         eyebrow="Obrigado"
-        title="Diagnostico solicitado com sucesso."
+        title="Diagnóstico solicitado com sucesso."
       />
 
       <section className="container-shell py-12 sm:py-16">
@@ -37,18 +37,18 @@ export default async function ObrigadoPage({
             <div className="mt-6 grid gap-4">
               {[
                 {
-                  title: "Leitura estrategica inicial",
-                  description: "Avaliamos objetivo, interesse de servico, urgencia e contexto do negocio antes do primeiro retorno.",
+                  title: "Leitura estratégica inicial",
+                  description: "Avaliamos objetivo, interesse de serviço, urgência e contexto do negócio antes do primeiro retorno.",
                   icon: ShieldCheck,
                 },
                 {
                   title: "Contato consultivo",
-                  description: "Voce tambem recebe um email de confirmacao com o resumo do fluxo e nossos canais para acelerar a conversa.",
+                  description: "Você também recebe um email de confirmação com o resumo do fluxo e nossos canais para acelerar a conversa.",
                   icon: MessageCircleMore,
                 },
                 {
-                  title: "Proximo passo comercial",
-                  description: "Se fizer sentido, agendamos a conversa para aprofundar diagnostico, escopo e plano de crescimento.",
+                  title: "Próximo passo comercial",
+                  description: "Se fizer sentido, agendamos a conversa para aprofundar diagnóstico, escopo e plano de crescimento.",
                   icon: CalendarDays,
                 },
               ].map((item) => (
@@ -68,11 +68,11 @@ export default async function ObrigadoPage({
               <p className="mt-4 text-sm leading-7 text-white/62">
                 {query?.service
                   ? `Interesse principal: ${query.service}.`
-                  : "Seu contato foi registrado para um diagnostico comercial e estrategico."}{" "}
+                  : "Seu contato foi registrado para um diagnóstico comercial e estratégico."}{" "}
                 {query?.contactPreference
                   ? `Canal preferido: ${query.contactPreference}. `
                   : ""}
-                Se o email informado estiver correto, voce tambem deve receber uma confirmacao automatica da agencia.
+                Se o email informado estiver correto, você também deve receber uma confirmação automática da agência.
               </p>
               <div className="mt-6 space-y-3 text-sm text-white/72">
                 <p>{content.settings.email}</p>
@@ -103,8 +103,8 @@ export default async function ObrigadoPage({
       <SchedulingEmbedSection
         calendarEmbedUrl={content.settings.calendarEmbedUrl}
         calendarUrl={content.settings.calendarUrl}
-        description="Se voce prefere acelerar, pode sair desta pagina com um horario reservado. O lead ja foi registrado e a agenda entra como proximo passo opcional."
-        title="Quer encurtar o caminho e ja marcar a conversa?"
+        description="Se você prefere acelerar, pode sair desta página com um horário reservado. O lead já foi registrado e a agenda entra como próximo passo opcional."
+        title="Quer encurtar o caminho e já marcar a conversa?"
         whatsapp={content.settings.whatsapp}
       />
     </main>

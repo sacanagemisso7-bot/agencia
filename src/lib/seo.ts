@@ -19,6 +19,19 @@ function normalizeBaseUrl(url: string) {
   return url.endsWith("/") ? url.slice(0, -1) : url;
 }
 
+function isLocalDevelopmentUrl(value: string) {
+  const trimmed = value.trim().toLowerCase();
+
+  return (
+    trimmed.startsWith("http://localhost") ||
+    trimmed.startsWith("https://localhost") ||
+    trimmed.startsWith("http://127.0.0.1") ||
+    trimmed.startsWith("https://127.0.0.1") ||
+    trimmed === "localhost:3000" ||
+    trimmed === "127.0.0.1:3000"
+  );
+}
+
 function parseBaseUrl(value: string) {
   const trimmed = value.trim();
   if (!trimmed) {
@@ -42,6 +55,10 @@ function parseBaseUrl(value: string) {
 function resolveBaseUrl() {
   for (const candidate of baseUrlCandidates) {
     if (!candidate) {
+      continue;
+    }
+
+    if (process.env.NODE_ENV === "production" && isLocalDevelopmentUrl(candidate)) {
       continue;
     }
 

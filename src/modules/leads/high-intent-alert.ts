@@ -123,7 +123,7 @@ export async function notifyHighIntentLead(lead: LeadRecord) {
           lead,
           channel: "EMAIL",
           subject: emailSubject,
-          recipientName: "Time Atlas",
+          recipientName: "Time Ameni",
           recipientEmail,
         }),
       ),
