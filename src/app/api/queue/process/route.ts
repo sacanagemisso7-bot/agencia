@@ -11,8 +11,9 @@ function isAuthorized(request: Request) {
   const token = authHeader?.replace("Bearer ", "");
   const tokenFromHeader = request.headers.get("x-queue-secret");
   const tokenFromQuery = new URL(request.url).searchParams.get("token");
+  const validTokens = [env.queueSecret, env.cronSecret].filter(Boolean);
 
-  return token === env.queueSecret || tokenFromHeader === env.queueSecret || tokenFromQuery === env.queueSecret;
+  return validTokens.includes(token ?? "") || validTokens.includes(tokenFromHeader ?? "") || validTokens.includes(tokenFromQuery ?? "");
 }
 
 async function handle(request: Request) {

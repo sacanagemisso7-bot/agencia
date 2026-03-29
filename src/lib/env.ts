@@ -17,6 +17,7 @@ export const env = {
   whatsappApiUrl: process.env.WHATSAPP_API_URL ?? "",
   whatsappApiToken: process.env.WHATSAPP_API_TOKEN ?? "",
   queueSecret: process.env.QUEUE_SECRET ?? "change-me",
+  cronSecret: process.env.CRON_SECRET ?? "",
   uploadDir: process.env.UPLOAD_DIR ?? "public/uploads",
   appEnv: process.env.APP_ENV ?? "development",
   storageProvider: process.env.STORAGE_PROVIDER ?? "local",

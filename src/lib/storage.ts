@@ -21,6 +21,10 @@ function sanitizeFileName(fileName: string) {
 
 class LocalStorageProvider implements StorageProvider {
   async upload(file: File): Promise<UploadResult> {
+    if (process.env.VERCEL) {
+      throw new Error("Upload local nao e persistente na Vercel. Defina STORAGE_PROVIDER=cloudinary e configure CLOUDINARY_CLOUD_NAME/CLOUDINARY_UPLOAD_PRESET.");
+    }
+
     const uploadRoot = path.join(process.cwd(), env.uploadDir);
     await mkdir(uploadRoot, { recursive: true });
 

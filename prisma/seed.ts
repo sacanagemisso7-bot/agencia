@@ -15,6 +15,22 @@ import {
   UserRole,
 } from "@prisma/client";
 
+const marketingSettingsSeed = {
+  agencyName: "Ameni",
+  heroTitle: "Amenize a complexidade potencialize seus resultados",
+  heroSubtitle:
+    "A Ameni integra estrategia, performance, conteudo, web e automacao para simplificar a operacao, reduzir ruido e acelerar resultados com mais clareza.",
+  primaryCta: "Solicitar diagnostico",
+  secondaryCta: "Agendar reuniao",
+  email: "contato@atlasgrowth.studio",
+  phone: "+55 11 4000-1234",
+  whatsapp: "+55 11 98888-0000",
+  calendarUrl: "https://calendly.com/atlasgrowth/diagnostico-estrategico",
+  calendarEmbedUrl: "https://calendly.com/atlasgrowth/diagnostico-estrategico",
+  instagramUrl: "https://instagram.com/atlasgrowth.studio",
+  linkedinUrl: "https://linkedin.com/company/atlas-growth-studio",
+} as const;
+
 const prisma = new PrismaClient();
 
 async function main() {
@@ -74,21 +90,7 @@ async function main() {
     update: {},
     create: {
       key: "marketing.hero",
-      value: {
-        agencyName: "Atlas Growth Studio",
-        heroTitle: "Trafego, oferta e operacao comercial alinhados para escalar vendas de alto ticket.",
-        heroSubtitle:
-          "Unimos estrategia, midia, CRO e IA comercial para transformar investimento em pipeline previsivel.",
-        primaryCta: "Agendar diagnostico",
-        secondaryCta: "Ver cases",
-        email: "contato@atlasgrowth.studio",
-        phone: "+55 11 4000-1234",
-        whatsapp: "+55 11 98888-0000",
-        calendarUrl: "https://calendly.com/atlasgrowth/diagnostico-estrategico",
-        calendarEmbedUrl: "https://calendly.com/atlasgrowth/diagnostico-estrategico",
-        instagramUrl: "https://instagram.com/atlasgrowth.studio",
-        linkedinUrl: "https://linkedin.com/company/atlas-growth-studio",
-      },
+      value: marketingSettingsSeed,
     },
   });
 
