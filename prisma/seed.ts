@@ -24,7 +24,7 @@ const marketingSettingsSeed = {
   secondaryCta: "Agendar reunião",
   email: "contato@ameni.digital",
   phone: "+55 11 4000-1234",
-  whatsapp: "+55 11 98888-0000",
+  whatsapp: "+55 42 98891-6791",
   calendarUrl: "",
   calendarEmbedUrl: "",
   instagramUrl: "",
