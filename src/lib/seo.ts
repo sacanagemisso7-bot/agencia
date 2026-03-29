@@ -5,9 +5,23 @@ import { env } from "@/lib/env";
 
 const siteName = getBrandName();
 const defaultDescription = getBrandDescription();
+const fallbackBaseUrl = "http://localhost:3000";
 
 function normalizeBaseUrl(url: string) {
   return url.endsWith("/") ? url.slice(0, -1) : url;
+}
+
+function resolveBaseUrl(value: string) {
+  const trimmed = value.trim();
+  const candidate = trimmed
+    ? normalizeBaseUrl(trimmed.includes("://") ? trimmed : `https://${trimmed}`)
+    : fallbackBaseUrl;
+
+  try {
+    return new URL(candidate);
+  } catch {
+    return new URL(fallbackBaseUrl);
+  }
 }
 
 export function getSiteName() {
@@ -15,12 +29,12 @@ export function getSiteName() {
 }
 
 export function getMetadataBase() {
-  return new URL(normalizeBaseUrl(env.appUrl));
+  return resolveBaseUrl(env.appUrl);
 }
 
 export function getAbsoluteUrl(path = "/") {
   const normalizedPath = path.startsWith("/") ? path : `/${path}`;
-  return `${normalizeBaseUrl(env.appUrl)}${normalizedPath}`;
+  return new URL(normalizedPath, `${getMetadataBase().origin}/`).toString();
 }
 
 type BuildMetadataInput = {
