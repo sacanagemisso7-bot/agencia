@@ -115,3 +115,43 @@ export async function createFinancialEntry(input: FinancialInput): Promise<Finan
   );
 }
 
+export async function updateFinancialEntryStatus(
+  id: string,
+  status: FinancialRecord["status"],
+  metadata?: {
+    paidAt?: string;
+  },
+): Promise<FinancialRecord | null> {
+  return withFallback(
+    async () => {
+      if (!prisma) {
+        throw new Error("No database client");
+      }
+
+      const entry = await prisma.financialEntry.update({
+        where: { id },
+        data: {
+          status,
+          paidAt: metadata?.paidAt ? new Date(metadata.paidAt) : status === "PAID" ? new Date() : undefined,
+        },
+        include: {
+          client: true,
+        },
+      });
+
+      return mapFinancial(entry);
+    },
+    () => {
+      const entry = demoStore.financialRecords.find((item) => item.id === id);
+      if (entry) {
+        entry.status = status;
+        if (metadata?.paidAt) {
+          entry.paidAt = metadata.paidAt;
+        } else if (status === "PAID") {
+          entry.paidAt = new Date().toISOString();
+        }
+      }
+      return entry ?? null;
+    },
+  );
+}

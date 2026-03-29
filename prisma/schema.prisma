@@ -114,6 +114,50 @@ enum FinancialStatus {
   CANCELLED
 }
 
+enum ProjectStatus {
+  PLANNING
+  ACTIVE
+  ON_HOLD
+  COMPLETED
+  ARCHIVED
+}
+
+enum ProjectHealth {
+  ON_TRACK
+  ATTENTION
+  AT_RISK
+}
+
+enum TemplateScope {
+  PROJECT
+  LIST
+  TASK
+  CHECKLIST
+  DOCUMENT
+  AUTOMATION
+}
+
+enum CustomFieldEntity {
+  CLIENT
+  PROJECT
+  TASK
+  CAMPAIGN
+  CONTENT
+  FORM
+}
+
+enum CustomFieldType {
+  TEXT
+  TEXTAREA
+  NUMBER
+  CURRENCY
+  BOOLEAN
+  DATE
+  SELECT
+  MULTI_SELECT
+  RELATION
+}
+
 model User {
   id              String        @id @default(cuid())
   name            String
@@ -126,9 +170,28 @@ model User {
   assignedLeads   Lead[]        @relation("LeadOwner")
   proposals       Proposal[]    @relation("ProposalAuthor")
   tasks           Task[]        @relation("TaskOwner")
+  ownedProjects   Project[]     @relation("ProjectOwner")
+  taskAssignments TaskAssignment[]
+  taskWatchers    TaskWatcher[]
+  taskComments    TaskComment[] @relation("TaskCommentAuthor")
+  checklistItems  TaskChecklistItem[] @relation("ChecklistAssignee")
   messages        Message[]     @relation("MessageAuthor")
   aiRequests      AIRequest[]   @relation("AIRequestAuthor")
   activityLogs    ActivityLog[] @relation("ActivityActor")
+}
+
+model Workspace {
+  id                     String                  @id @default(cuid())
+  name                   String
+  slug                   String                  @unique
+  description            String?
+  clients                Client[]
+  projects               Project[]
+  tasks                  Task[]
+  templates              WorkTemplate[]
+  customFieldDefinitions CustomFieldDefinition[]
+  createdAt              DateTime                @default(now())
+  updatedAt              DateTime                @updatedAt
 }
 
 model Lead {
@@ -138,9 +201,19 @@ model Lead {
   phone           String?
   company         String?
   niche           String?
+  contactPreference String?
+  serviceInterest String?
+  urgency         String?
   objective       String?
   message         String?
   source          String        @default("site")
+  landingPage     String?
+  referrer        String?
+  utmSource       String?
+  utmMedium       String?
+  utmCampaign     String?
+  utmTerm         String?
+  utmContent      String?
   status          LeadStatus    @default(NEW)
   tags            String[]
   notes           String?
@@ -162,6 +235,8 @@ model Lead {
 
 model Client {
   id                  String           @id @default(cuid())
+  workspaceId         String?
+  workspace           Workspace?       @relation(fields: [workspaceId], references: [id])
   name                String
   companyName         String
   email               String
@@ -175,6 +250,7 @@ model Client {
   websiteUrl          String?
   convertedFromLeadId String?      @unique
   convertedFromLead   Lead?            @relation(fields: [convertedFromLeadId], references: [id])
+  projects            Project[]
   campaigns           Campaign[]
   proposals           Proposal[]
   tasks               Task[]
@@ -187,6 +263,46 @@ model Client {
   updatedAt           DateTime         @updatedAt
 
   @@index([contractStatus, createdAt])
+}
+
+model Project {
+  id          String        @id @default(cuid())
+  workspaceId String
+  workspace   Workspace     @relation(fields: [workspaceId], references: [id])
+  clientId    String?
+  client      Client?       @relation(fields: [clientId], references: [id])
+  ownerId     String?
+  owner       User?         @relation("ProjectOwner", fields: [ownerId], references: [id])
+  name        String
+  slug        String
+  summary     String?
+  status      ProjectStatus @default(PLANNING)
+  health      ProjectHealth @default(ON_TRACK)
+  startDate   DateTime?
+  endDate     DateTime?
+  lists       ProjectList[]
+  tasks       Task[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@unique([workspaceId, slug])
+  @@index([workspaceId, clientId, status])
+}
+
+model ProjectList {
+  id            String   @id @default(cuid())
+  projectId     String
+  project       Project  @relation(fields: [projectId], references: [id])
+  name          String
+  description   String?
+  color         String?
+  order         Int      @default(0)
+  statusCatalog String[]
+  tasks         Task[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([projectId, order])
 }
 
 model Proposal {
@@ -216,20 +332,110 @@ model Task {
   title         String
   description   String?
   status        TaskStatus   @default(TODO)
+  statusLabel   String?
   priority      TaskPriority @default(MEDIUM)
+  startDate     DateTime?
   dueDate       DateTime?
+  endDate       DateTime?
   checklist     Json?
+  estimatedMinutes Int?
+  trackedMinutes Int        @default(0)
+  labels        String[]
+  recurringRule String?
+  blockedReason String?
   ownerId       String?
   owner         User?        @relation("TaskOwner", fields: [ownerId], references: [id])
+  workspaceId   String?
+  workspace     Workspace?   @relation(fields: [workspaceId], references: [id])
+  projectId     String?
+  project       Project?     @relation(fields: [projectId], references: [id])
+  listId        String?
+  list          ProjectList? @relation(fields: [listId], references: [id])
+  parentTaskId  String?
+  parentTask    Task?        @relation("TaskSubtasks", fields: [parentTaskId], references: [id])
+  subtasks      Task[]       @relation("TaskSubtasks")
   clientId      String?
   client        Client?      @relation(fields: [clientId], references: [id])
   leadId        String?
   lead          Lead?        @relation(fields: [leadId], references: [id])
+  assignments   TaskAssignment[]
+  watchers      TaskWatcher[]
+  comments      TaskComment[]
+  checklistItems TaskChecklistItem[]
+  blockedBy     TaskDependency[] @relation("TaskBlockedBy")
+  blocking      TaskDependency[] @relation("TaskBlocking")
   activityLogs  ActivityLog[]
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
 
   @@index([status, priority, dueDate])
+  @@index([projectId, listId, status, dueDate])
+  @@index([ownerId, projectId, status])
+}
+
+model TaskAssignment {
+  id         String   @id @default(cuid())
+  taskId      String
+  task        Task     @relation(fields: [taskId], references: [id])
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  isPrimary   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  @@unique([taskId, userId])
+  @@index([userId, createdAt])
+}
+
+model TaskWatcher {
+  id        String   @id @default(cuid())
+  taskId     String
+  task       Task     @relation(fields: [taskId], references: [id])
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  createdAt  DateTime @default(now())
+
+  @@unique([taskId, userId])
+}
+
+model TaskComment {
+  id         String   @id @default(cuid())
+  taskId      String
+  task        Task     @relation(fields: [taskId], references: [id])
+  authorId    String?
+  author      User?    @relation("TaskCommentAuthor", fields: [authorId], references: [id])
+  body        String
+  mentions    String[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([taskId, createdAt])
+}
+
+model TaskChecklistItem {
+  id          String   @id @default(cuid())
+  taskId       String
+  task         Task     @relation(fields: [taskId], references: [id])
+  title        String
+  done         Boolean  @default(false)
+  order        Int      @default(0)
+  assigneeId   String?
+  assignee     User?    @relation("ChecklistAssignee", fields: [assigneeId], references: [id])
+  dueDate      DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([taskId, order])
+}
+
+model TaskDependency {
+  id              String   @id @default(cuid())
+  taskId          String
+  task            Task     @relation("TaskBlockedBy", fields: [taskId], references: [id])
+  dependsOnTaskId String
+  dependsOnTask   Task     @relation("TaskBlocking", fields: [dependsOnTaskId], references: [id])
+  createdAt       DateTime @default(now())
+
+  @@unique([taskId, dependsOnTaskId])
 }
 
 model Campaign {
@@ -368,6 +574,52 @@ model Attachment {
   updatedAt   DateTime  @updatedAt
 
   @@index([clientId, proposalId, leadId, createdAt])
+}
+
+model WorkTemplate {
+  id          String        @id @default(cuid())
+  workspaceId String
+  workspace   Workspace     @relation(fields: [workspaceId], references: [id])
+  name        String
+  description String?
+  scope       TemplateScope
+  payload     Json
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@index([workspaceId, scope, createdAt])
+}
+
+model CustomFieldDefinition {
+  id          String            @id @default(cuid())
+  workspaceId String
+  workspace   Workspace         @relation(fields: [workspaceId], references: [id])
+  name        String
+  key         String
+  entityType  CustomFieldEntity
+  fieldType   CustomFieldType
+  options     Json?
+  required    Boolean           @default(false)
+  values      CustomFieldValue[]
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@unique([workspaceId, key, entityType])
+  @@index([workspaceId, entityType, createdAt])
+}
+
+model CustomFieldValue {
+  id           String            @id @default(cuid())
+  definitionId String
+  definition   CustomFieldDefinition @relation(fields: [definitionId], references: [id])
+  entityType   CustomFieldEntity
+  entityId     String
+  value        Json
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  @@unique([definitionId, entityId])
+  @@index([entityType, entityId])
 }
 
 model Testimonial {

@@ -8,7 +8,7 @@ import { z } from "zod";
 import { clearSessionCookie, createSessionCookie } from "@/lib/auth";
 import { demoAdminUser } from "@/lib/demo-data";
 import { env } from "@/lib/env";
-import { prisma } from "@/lib/prisma";
+import { prisma, withFallback } from "@/lib/prisma";
 
 type LoginState = {
   error?: string;
@@ -32,31 +32,36 @@ export async function loginAction(_: LoginState, formData: FormData): Promise<Lo
   }
 
   const { email, password } = parsed.data;
+  const db = prisma;
 
-  if (prisma) {
-    const user = await prisma.user.findUnique({
-      where: { email },
+  const user = db
+    ? await withFallback(
+        () =>
+          db.user.findUnique({
+            where: { email },
+          }),
+        () => null,
+      )
+    : null;
+
+  if (user) {
+    const validPassword = await bcrypt.compare(password, user.passwordHash);
+
+    if (!validPassword) {
+      return {
+        error: "Credenciais invalidas.",
+      };
+    }
+
+    await createSessionCookie({
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
     });
 
-    if (user) {
-      const validPassword = await bcrypt.compare(password, user.passwordHash);
-
-      if (!validPassword) {
-        return {
-          error: "Credenciais invalidas.",
-        };
-      }
-
-      await createSessionCookie({
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        role: user.role,
-      });
-
-      revalidatePath("/admin");
-      redirect("/admin");
-    }
+    revalidatePath("/admin");
+    redirect("/admin");
   }
 
   if (email === env.adminEmail && password === env.adminPassword) {

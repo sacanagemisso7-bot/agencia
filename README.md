@@ -30,9 +30,15 @@ Plataforma full-stack para uma agencia de trafego pago com site institucional pr
 - fluxo de conversao de lead para cliente
 - portal inicial do cliente com campanhas, mensagens, propostas e proximos passos
 - relatorios executivos de conversao, canais e financeiro
+- agenda comercial com fila de leads que pediram reuniao
+- metodologia, pagina de como funciona e agenda embutida no site
+- CTA flutuante de WhatsApp/agendamento
+- analytics prontos para GA4 e PostHog
+- observabilidade client/server com webhook e camada pronta para Sentry
 - script de processamento de fila para uso via cron/worker
 - seeds com dados de exemplo
 - modo demo quando o banco nao estiver configurado
+- migrations reais em `prisma/migrations`
 
 ## Como rodar
 
@@ -58,6 +64,12 @@ npm run db:generate
 
 ```bash
 npm run db:push
+```
+
+Ou, se quiser seguir o fluxo com migrations:
+
+```bash
+npm run db:migrate:dev
 ```
 
 5. Popule com seed:
@@ -96,6 +108,7 @@ npm run dev
 - `npm run build`
 - `npm run db:generate`
 - `npm run db:push`
+- `npm run db:migrate:dev`
 - `npm run db:migrate:deploy`
 - `npm run db:seed`
 - `npm run queue:process`
@@ -125,6 +138,7 @@ docker compose exec app npm run db:seed
 - `/api/health`: valida se a aplicacao respondeu.
 - `/api/ready`: valida se a aplicacao esta pronta e tenta checar o banco.
 - `npm run queue:process`: processa mensagens em fila localmente.
+- `/api/observability/client-error`: recebe erros capturados no client.
 
 ## CI
 
@@ -163,7 +177,10 @@ Veja `.env.example` para:
 - banco
 - auth
 - IA
+- agenda/Calendly via CMS do site
 - SMTP
+- analytics (`NEXT_PUBLIC_GA_MEASUREMENT_ID`, `NEXT_PUBLIC_POSTHOG_KEY`, `NEXT_PUBLIC_POSTHOG_HOST`)
+- observabilidade (`OBSERVABILITY_WEBHOOK_URL`, `SENTRY_DSN`, `NEXT_PUBLIC_SENTRY_DSN`)
 - canais futuros como WhatsApp
 
 ## Observacoes

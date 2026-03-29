@@ -4,9 +4,9 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
+import { runAutomationCycle } from "@/modules/automation/runner";
 import { createMessage, getMessageById, updateMessageStatus } from "@/modules/messages/repository";
 import { dispatchMessage } from "@/modules/messages/provider";
-import { processQueuedMessages } from "@/modules/messages/queue";
 import { recordActivity } from "@/modules/shared/activity-log";
 
 const messageSchema = z.object({
@@ -79,6 +79,7 @@ export async function createMessageAction(formData: FormData) {
 
   revalidatePath("/admin/messages");
   revalidatePath("/admin");
+  revalidatePath("/admin/notifications");
   redirect(`/admin/messages?success=${parsed.sendNow === "true" ? "sent" : "draft"}`);
 }
 
@@ -111,13 +112,17 @@ export async function sendDraftMessageAction(formData: FormData) {
 
   revalidatePath("/admin/messages");
   revalidatePath("/admin/logs");
+  revalidatePath("/admin/notifications");
   redirect(`/admin/messages?success=${delivery.ok ? "approved" : "failed"}`);
 }
 
 export async function processMessageQueueAction() {
-  await processQueuedMessages();
+  await runAutomationCycle();
 
   revalidatePath("/admin/messages");
   revalidatePath("/admin/logs");
+  revalidatePath("/admin/notifications");
+  revalidatePath("/admin/finance");
+  revalidatePath("/admin/automations");
   redirect("/admin/messages?success=queue");
 }

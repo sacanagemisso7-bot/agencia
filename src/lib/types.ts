@@ -25,6 +25,11 @@ export type AIRequestMode =
 export type AIRequestStatus = "PENDING" | "GENERATED" | "APPROVED" | "SENT" | "FAILED";
 export type FinancialEntryType = "CONTRACT" | "INVOICE" | "PAYMENT" | "ADJUSTMENT";
 export type FinancialStatus = "PENDING" | "PAID" | "OVERDUE" | "CANCELLED";
+export type ProjectStatus = "PLANNING" | "ACTIVE" | "ON_HOLD" | "COMPLETED" | "ARCHIVED";
+export type ProjectHealth = "ON_TRACK" | "ATTENTION" | "AT_RISK";
+export type TemplateScope = "PROJECT" | "LIST" | "TASK" | "CHECKLIST" | "DOCUMENT" | "AUTOMATION";
+export type CustomFieldEntity = "CLIENT" | "PROJECT" | "TASK" | "CAMPAIGN" | "CONTENT" | "FORM";
+export type CustomFieldType = "TEXT" | "TEXTAREA" | "NUMBER" | "CURRENCY" | "BOOLEAN" | "DATE" | "SELECT" | "MULTI_SELECT" | "RELATION";
 
 export type SelectOption = {
   label: string;
@@ -38,6 +43,30 @@ export type UserSession = {
   role: "ADMIN" | "ACCOUNT_MANAGER" | "CLIENT";
 };
 
+export type UserRecord = {
+  id: string;
+  name: string;
+  email: string;
+  role: UserSession["role"];
+  avatarUrl?: string | null;
+  createdAt: string;
+};
+
+export type AssigneeRecord = {
+  id: string;
+  name: string;
+  email?: string | null;
+  role?: UserSession["role"];
+};
+
+export type WorkspaceRecord = {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string | null;
+  createdAt: string;
+};
+
 export type LeadRecord = {
   id: string;
   name: string;
@@ -45,18 +74,31 @@ export type LeadRecord = {
   phone?: string | null;
   company?: string | null;
   niche?: string | null;
+  contactPreference?: string | null;
+  serviceInterest?: string | null;
+  urgency?: string | null;
   objective?: string | null;
   message?: string | null;
   source: string;
+  landingPage?: string | null;
+  referrer?: string | null;
+  utmSource?: string | null;
+  utmMedium?: string | null;
+  utmCampaign?: string | null;
+  utmTerm?: string | null;
+  utmContent?: string | null;
   status: LeadStatus;
   tags: string[];
   notes?: string | null;
+  estimatedTicket?: number | null;
+  ownerId?: string | null;
   ownerName?: string | null;
   createdAt: string;
 };
 
 export type ClientRecord = {
   id: string;
+  workspaceId?: string | null;
   name: string;
   companyName: string;
   email: string;
@@ -69,6 +111,86 @@ export type ClientRecord = {
   notes?: string | null;
   websiteUrl?: string | null;
   convertedFromLeadId?: string | null;
+  createdAt: string;
+};
+
+export type ProjectRecord = {
+  id: string;
+  workspaceId: string;
+  workspaceName?: string | null;
+  clientId?: string | null;
+  clientName?: string | null;
+  ownerId?: string | null;
+  ownerName?: string | null;
+  name: string;
+  slug: string;
+  summary?: string | null;
+  status: ProjectStatus;
+  health: ProjectHealth;
+  startDate?: string | null;
+  endDate?: string | null;
+  taskCount: number;
+  completedTaskCount: number;
+  createdAt: string;
+};
+
+export type ProjectListRecord = {
+  id: string;
+  projectId: string;
+  projectName?: string | null;
+  name: string;
+  description?: string | null;
+  color?: string | null;
+  order: number;
+  statusCatalog: string[];
+  taskCount: number;
+  createdAt: string;
+};
+
+export type TaskChecklistItemRecord = {
+  id: string;
+  taskId: string;
+  title: string;
+  done: boolean;
+  order: number;
+  assigneeId?: string | null;
+  assigneeName?: string | null;
+  dueDate?: string | null;
+  createdAt: string;
+};
+
+export type TaskCommentRecord = {
+  id: string;
+  taskId: string;
+  authorId?: string | null;
+  authorName?: string | null;
+  body: string;
+  mentions: string[];
+  createdAt: string;
+};
+
+export type TaskDependencyRecord = {
+  id: string;
+  taskId: string;
+  dependsOnTaskId: string;
+  dependsOnTaskTitle?: string | null;
+  createdAt: string;
+};
+
+export type TaskAssignmentRecord = {
+  id: string;
+  taskId: string;
+  userId: string;
+  userName: string;
+  isPrimary: boolean;
+  createdAt: string;
+};
+
+export type TaskWatcherRecord = {
+  id: string;
+  taskId: string;
+  userId: string;
+  userName: string;
   createdAt: string;
 };
 
@@ -92,14 +214,49 @@ export type TaskRecord = {
   title: string;
   description?: string | null;
   status: TaskStatus;
+  statusLabel?: string | null;
   priority: TaskPriority;
+  startDate?: string | null;
   dueDate?: string | null;
+  endDate?: string | null;
+  estimatedMinutes?: number | null;
+  trackedMinutes?: number | null;
+  labels: string[];
+  recurringRule?: string | null;
+  blockedReason?: string | null;
+  ownerId?: string | null;
   ownerName?: string | null;
+  workspaceId?: string | null;
+  workspaceName?: string | null;
+  projectId?: string | null;
+  projectName?: string | null;
+  listId?: string | null;
+  listName?: string | null;
+  parentTaskId?: string | null;
+  parentTaskTitle?: string | null;
   clientId?: string | null;
   clientName?: string | null;
   leadId?: string | null;
   leadName?: string | null;
+  assignees: AssigneeRecord[];
+  watchers: AssigneeRecord[];
+  checklistProgress?: {
+    completed: number;
+    total: number;
+  };
+  commentCount: number;
+  subtaskCount: number;
+  blockedByCount: number;
+  isMyTask?: boolean;
   createdAt: string;
+};
+
+export type TaskDetailRecord = TaskRecord & {
+  comments: TaskCommentRecord[];
+  checklistItems: TaskChecklistItemRecord[];
+  subtasks: TaskRecord[];
+  dependencies: TaskDependencyRecord[];
+  customFields: CustomFieldValueRecord[];
 };
 
 export type CampaignRecord = {
@@ -162,6 +319,13 @@ export type ActivityRecord = {
   entityId?: string | null;
   description: string;
   actorName?: string | null;
+  leadId?: string | null;
+  clientId?: string | null;
+  proposalId?: string | null;
+  taskId?: string | null;
+  campaignId?: string | null;
+  messageId?: string | null;
+  aiRequestId?: string | null;
   createdAt: string;
 };
 
@@ -217,6 +381,7 @@ export type TestimonialRecord = {
 
 export type CaseStudyRecord = {
   id: string;
+  slug: string;
   title: string;
   niche: string;
   challenge: string;
@@ -238,8 +403,61 @@ export type BlogPostRecord = {
   title: string;
   slug: string;
   excerpt: string;
+  content: string;
   category: string;
   publishedAt?: string | null;
+};
+
+export type MethodologyPillarRecord = {
+  title: string;
+  description: string;
+};
+
+export type MethodologyContentRecord = {
+  heroEyebrow: string;
+  heroTitle: string;
+  heroDescription: string;
+  heroAside: string;
+  processTitle: string;
+  processDescription: string;
+  impactEyebrow: string;
+  impactTitle: string;
+  impactBody: string[];
+  ctaTitle: string;
+  ctaDescription: string;
+  pillars: MethodologyPillarRecord[];
+};
+
+export type ProofFeatureRecord = {
+  title: string;
+  description: string;
+};
+
+export type ProofMetricRecord = {
+  value: string;
+  label: string;
+};
+
+export type ProofBarRecord = {
+  label: string;
+  width: string;
+};
+
+export type ProofAssetsContentRecord = {
+  eyebrow: string;
+  title: string;
+  description: string;
+  logos: string[];
+  features: ProofFeatureRecord[];
+  mockupEyebrow: string;
+  mockupTitle: string;
+  mockupMetrics: ProofMetricRecord[];
+  mockupBars: ProofBarRecord[];
+  creativeEyebrow: string;
+  creativeTitle: string;
+  creativeDescription: string;
+  landingEyebrow: string;
+  landingHighlight: string;
 };
 
 export type SiteSettingsRecord = {
@@ -251,6 +469,10 @@ export type SiteSettingsRecord = {
   email: string;
   phone: string;
   whatsapp: string;
+  calendarUrl: string;
+  calendarEmbedUrl: string;
+  instagramUrl: string;
+  linkedinUrl: string;
 };
 
 export type DashboardSummary = {
@@ -271,4 +493,84 @@ export type SiteContentBundle = {
   caseStudies: CaseStudyRecord[];
   faqs: FAQRecord[];
   blogPosts: BlogPostRecord[];
+  methodology: MethodologyContentRecord;
+  proofAssets: ProofAssetsContentRecord;
+};
+
+export type NotificationSeverity = "info" | "warning" | "critical" | "success";
+
+export type NotificationRecord = {
+  id: string;
+  title: string;
+  description: string;
+  severity: NotificationSeverity;
+  category: "lead" | "proposal" | "task" | "message" | "system";
+  href?: string;
+  createdAt: string;
+};
+
+export type AutomationSettingsRecord = {
+  highIntentThreshold: number;
+  leadSlaImmediateHours: number;
+  leadSlaThirtyDaysHours: number;
+  leadSlaSixtyToNinetyDaysHours: number;
+  leadSlaPlanningHours: number;
+  leadSlaDefaultHours: number;
+  leadReminderDelayHours: number;
+  proposalFollowUpAfterDays: number;
+  proposalFollowUpChannel: MessageChannel;
+  internalAlertRecipients: string;
+};
+
+export type WorkTemplateRecord = {
+  id: string;
+  workspaceId: string;
+  name: string;
+  description?: string | null;
+  scope: TemplateScope;
+  payload: Record<string, unknown>;
+  createdAt: string;
+};
+
+export type CustomFieldDefinitionRecord = {
+  id: string;
+  workspaceId: string;
+  name: string;
+  key: string;
+  entityType: CustomFieldEntity;
+  fieldType: CustomFieldType;
+  options?: Record<string, unknown> | null;
+  required: boolean;
+  createdAt: string;
+};
+
+export type CustomFieldValueRecord = {
+  id: string;
+  definitionId: string;
+  definitionName?: string | null;
+  entityType: CustomFieldEntity;
+  entityId: string;
+  value: Record<string, unknown> | string | number | boolean | string[] | null;
+  createdAt: string;
+};
+
+export type TimelineItem = {
+  id: string;
+  title: string;
+  description: string;
+  kind: "activity" | "message" | "proposal" | "task" | "attachment" | "ai" | "campaign";
+  status?: string;
+  href?: string;
+  createdAt: string;
+  meta?: string;
+};
+
+export type WorkHubRecord = {
+  workspace: WorkspaceRecord;
+  projects: ProjectRecord[];
+  projectLists: ProjectListRecord[];
+  tasks: TaskRecord[];
+  templates: WorkTemplateRecord[];
+  customFields: CustomFieldDefinitionRecord[];
+  users: UserRecord[];
 };

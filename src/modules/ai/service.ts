@@ -3,12 +3,17 @@ import { AIRequestMode } from "@prisma/client";
 import { demoStore, nextDemoId } from "@/lib/demo-store";
 import { prisma, withFallback } from "@/lib/prisma";
 import type { AIRequestRecord, MessageRecord } from "@/lib/types";
+import { listCampaigns } from "@/modules/campaigns/repository";
 import { listClients } from "@/modules/clients/repository";
+import { listLeads } from "@/modules/leads/repository";
 import { createMessage, updateMessageStatus } from "@/modules/messages/repository";
 import { dispatchMessage } from "@/modules/messages/provider";
+import { listMessages } from "@/modules/messages/repository";
 import { createProposal } from "@/modules/proposals/repository";
+import { listProposals } from "@/modules/proposals/repository";
 import { recordActivity } from "@/modules/shared/activity-log";
 import { createTask } from "@/modules/tasks/repository";
+import { listTasks } from "@/modules/tasks/repository";
 
 import { getAIProvider } from "./provider";
 
@@ -27,12 +32,28 @@ function buildContext({
   clientName,
   niche,
   goals,
+  stage,
+  recentMessages,
+  openTasks,
+  activeCampaigns,
 }: {
   clientName?: string;
   niche?: string | null;
   goals?: string | null;
+  stage?: string | null;
+  recentMessages?: string[];
+  openTasks?: string[];
+  activeCampaigns?: string[];
 }) {
-  return [clientName ? `Cliente: ${clientName}` : null, niche ? `Nicho: ${niche}` : null, goals ? `Objetivo: ${goals}` : null]
+  return [
+    clientName ? `Cliente: ${clientName}` : null,
+    niche ? `Nicho: ${niche}` : null,
+    goals ? `Objetivo: ${goals}` : null,
+    stage ? `Estagio atual: ${stage}` : null,
+    recentMessages?.length ? `Ultimos contatos: ${recentMessages.join(" | ")}` : null,
+    openTasks?.length ? `Demandas internas: ${openTasks.join(" | ")}` : null,
+    activeCampaigns?.length ? `Campanhas em andamento: ${activeCampaigns.join(" | ")}` : null,
+  ]
     .filter(Boolean)
     .join(" | ");
 }
@@ -173,20 +194,30 @@ async function createAIErrorRecord(input: AIExecutionInput, error: string) {
   );
 }
 
-export async function listAIRequests(): Promise<AIRequestRecord[]> {
+export async function listAIRequests(filters?: { clientId?: string; leadId?: string; take?: number }): Promise<AIRequestRecord[]> {
   return withFallback(
     async () => {
       if (!prisma) {
-        return demoStore.aiRequests;
+        return demoStore.aiRequests
+          .filter((request) => {
+            if (filters?.clientId && request.clientId !== filters.clientId) return false;
+            if (filters?.leadId && request.leadId !== filters.leadId) return false;
+            return true;
+          })
+          .slice(0, filters?.take ?? 20);
       }
 
       const requests = await prisma.aIRequest.findMany({
+        where: {
+          clientId: filters?.clientId,
+          leadId: filters?.leadId,
+        },
         orderBy: { createdAt: "desc" },
         include: {
           client: true,
           lead: true,
         },
-        take: 20,
+        take: filters?.take ?? 20,
       });
 
       return requests.map((request) => ({
@@ -206,19 +237,52 @@ export async function listAIRequests(): Promise<AIRequestRecord[]> {
         createdAt: request.createdAt.toISOString(),
       }));
     },
-    () => demoStore.aiRequests,
+    () =>
+      demoStore.aiRequests
+        .filter((request) => {
+          if (filters?.clientId && request.clientId !== filters.clientId) return false;
+          if (filters?.leadId && request.leadId !== filters.leadId) return false;
+          return true;
+        })
+        .slice(0, filters?.take ?? 20),
   );
 }
 
 export async function executeAIWorkflow(input: AIExecutionInput) {
-  const clients = await listClients();
+  const [clients, leads, messages, proposals, tasks, campaigns] = await Promise.all([
+    listClients(),
+    listLeads(),
+    listMessages(),
+    listProposals(),
+    listTasks(),
+    listCampaigns(),
+  ]);
   const client = clients.find((item) => item.id === input.clientId);
-  const lead = demoStore.leads.find((item) => item.id === input.leadId);
+  const lead = leads.find((item) => item.id === input.leadId);
   const provider = getAIProvider();
+  const scopedMessages = messages
+    .filter((item) => (input.clientId ? item.clientId === input.clientId : true) && (input.leadId ? item.leadId === input.leadId : true))
+    .slice(0, 3)
+    .map((item) => item.subject ?? item.body.slice(0, 70));
+  const scopedTasks = tasks
+    .filter((item) => item.status !== "DONE" && ((input.clientId && item.clientId === input.clientId) || (input.leadId && item.leadId === input.leadId)))
+    .slice(0, 3)
+    .map((item) => item.title);
+  const scopedCampaigns = campaigns
+    .filter((item) => input.clientId && item.clientId === input.clientId)
+    .slice(0, 3)
+    .map((item) => item.name);
+  const scopedProposal = proposals.find(
+    (item) => (input.clientId && item.clientId === input.clientId) || (input.leadId && item.leadId === input.leadId),
+  );
   const context = buildContext({
     clientName: client?.companyName ?? lead?.name,
     niche: client?.niche ?? lead?.niche,
     goals: client?.goals ?? lead?.objective,
+    stage: lead?.status ?? scopedProposal?.status,
+    recentMessages: scopedMessages,
+    openTasks: scopedTasks,
+    activeCampaigns: scopedCampaigns,
   });
   let generatedText: string;
 

@@ -25,7 +25,7 @@ export function ClientShell({
             <Link className="font-display text-2xl text-ink-950" href="/portal">
               Portal do Cliente
             </Link>
-            <p className="mt-1 text-sm text-ink-950/62">Atlas Growth Studio</p>
+            <p className="mt-1 text-sm text-ink-950/62">Ameni</p>
           </div>
           <form action={logoutAction}>
             <SubmitButton size="sm" variant="secondary">
@@ -38,7 +38,7 @@ export function ClientShell({
         <Card className="mb-6 p-6">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-500">Area do cliente</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-500">Área do cliente</p>
               <h1 className="mt-2 font-display text-4xl text-ink-950">{title}</h1>
               <p className="mt-3 max-w-3xl text-sm leading-7 text-ink-950/65">{description}</p>
             </div>
@@ -50,4 +50,3 @@ export function ClientShell({
     </div>
   );
 }
-

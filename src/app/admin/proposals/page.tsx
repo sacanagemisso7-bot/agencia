@@ -13,7 +13,7 @@ import { formatCurrency, formatDate } from "@/lib/formatters";
 import { proposalStatusOptions } from "@/lib/navigation";
 import { listClients } from "@/modules/clients/repository";
 import { listLeads } from "@/modules/leads/repository";
-import { createProposalAction, deleteProposalAction } from "@/modules/proposals/actions";
+import { createProposalAction, deleteProposalAction, sendProposalForApprovalAction } from "@/modules/proposals/actions";
 import { listProposals } from "@/modules/proposals/repository";
 
 function getProposalToast(success?: string) {
@@ -24,6 +24,8 @@ function getProposalToast(success?: string) {
       return "Proposta removida.";
     case "updated":
       return "Proposta atualizada.";
+    case "sent":
+      return "Proposta enviada para aprovacao.";
     default:
       return null;
   }
@@ -106,6 +108,14 @@ export default async function ProposalsPage({
                             Editar
                           </Button>
                         </Link>
+                        {proposal.status === "DRAFT" ? (
+                          <form action={sendProposalForApprovalAction}>
+                            <input name="id" type="hidden" value={proposal.id} />
+                            <Button size="sm" type="submit" variant="secondary">
+                              Enviar
+                            </Button>
+                          </form>
+                        ) : null}
                         <form action={deleteProposalAction}>
                           <input name="id" type="hidden" value={proposal.id} />
                           <Button size="sm" type="submit" variant="ghost">

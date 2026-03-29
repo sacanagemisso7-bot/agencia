@@ -1,18 +1,24 @@
-import type { SelectOption } from "@/lib/types";
+import type { SelectOption, UserSession } from "@/lib/types";
 
 export const marketingNavigation = [
   { href: "/", label: "Home" },
   { href: "/sobre", label: "Sobre" },
+  { href: "/metodologia", label: "Metodologia" },
   { href: "/servicos", label: "Servicos" },
+  { href: "/setores", label: "Setores" },
   { href: "/cases", label: "Cases" },
-  { href: "/depoimentos", label: "Depoimentos" },
   { href: "/insights", label: "Insights" },
   { href: "/contato", label: "Contato" },
 ];
 
 export const adminNavigation = [
   { href: "/admin", label: "Dashboard" },
-  { href: "/admin/reports", label: "Relatorios" },
+  { href: "/admin/work", label: "Work OS" },
+  { href: "/admin/notifications", label: "Notificações" },
+  { href: "/admin/automations", label: "Automações" },
+  { href: "/admin/reports", label: "Relatórios" },
+  { href: "/admin/pipeline", label: "Pipeline" },
+  { href: "/admin/scheduling", label: "Agenda" },
   { href: "/admin/leads", label: "Leads" },
   { href: "/admin/clients", label: "Clientes" },
   { href: "/admin/proposals", label: "Propostas" },
@@ -21,9 +27,21 @@ export const adminNavigation = [
   { href: "/admin/finance", label: "Financeiro" },
   { href: "/admin/messages", label: "Mensagens" },
   { href: "/admin/ai", label: "Central IA" },
+  { href: "/admin/team", label: "Time" },
   { href: "/admin/site", label: "CMS" },
   { href: "/admin/logs", label: "Logs" },
 ];
+
+export function getAdminNavigation(role: UserSession["role"]) {
+  if (role === "ADMIN") {
+    return adminNavigation;
+  }
+
+  return adminNavigation.filter(
+    (item) =>
+      !["Automações", "Financeiro", "Time", "CMS", "Logs"].includes(item.label),
+  );
+}
 
 export const leadStatusOptions: SelectOption[] = [
   { value: "NEW", label: "Novo" },

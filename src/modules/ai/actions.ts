@@ -15,6 +15,7 @@ const aiSchema = z.object({
   channel: z.enum(["EMAIL", "WHATSAPP", "INTERNAL", "SMS"]),
   clientId: z.string().optional(),
   leadId: z.string().optional(),
+  redirectTo: z.string().optional(),
 });
 
 export async function runAIAction(formData: FormData) {
@@ -27,6 +28,7 @@ export async function runAIAction(formData: FormData) {
     channel: String(formData.get("channel") ?? "EMAIL"),
     clientId: String(formData.get("clientId") ?? ""),
     leadId: String(formData.get("leadId") ?? ""),
+    redirectTo: String(formData.get("redirectTo") ?? ""),
   });
 
   await executeAIWorkflow({
@@ -41,5 +43,16 @@ export async function runAIAction(formData: FormData) {
   revalidatePath("/admin/tasks");
   revalidatePath("/admin/logs");
   revalidatePath("/admin");
-  redirect("/admin/ai?success=generated");
+  if (parsed.clientId) {
+    revalidatePath(`/admin/clients/${parsed.clientId}`);
+  }
+  if (parsed.leadId) {
+    revalidatePath(`/admin/leads/${parsed.leadId}`);
+  }
+
+  const targetPath =
+    parsed.redirectTo ||
+    `/admin/ai?success=generated${parsed.clientId ? `&clientId=${parsed.clientId}` : ""}${parsed.leadId ? `&leadId=${parsed.leadId}` : ""}`;
+
+  redirect(targetPath);
 }

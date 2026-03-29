@@ -22,12 +22,25 @@ async function main() {
 
   const admin = await prisma.user.upsert({
     where: { email: "admin@agencia-premium.com" },
-    update: {},
+    update: {
+      name: "Joice Martins",
+    },
     create: {
-      name: "Amanda Rocha",
+      name: "Joice Martins",
       email: "admin@agencia-premium.com",
       passwordHash,
       role: UserRole.ADMIN,
+    },
+  });
+
+  await prisma.user.upsert({
+    where: { email: "caio@atlasgrowth.studio" },
+    update: {},
+    create: {
+      name: "Caio Martins",
+      email: "caio@atlasgrowth.studio",
+      passwordHash,
+      role: UserRole.ACCOUNT_MANAGER,
     },
   });
 
@@ -54,6 +67,29 @@ async function main() {
       },
     ],
     skipDuplicates: true,
+  });
+
+  await prisma.siteSetting.upsert({
+    where: { key: "marketing.hero" },
+    update: {},
+    create: {
+      key: "marketing.hero",
+      value: {
+        agencyName: "Atlas Growth Studio",
+        heroTitle: "Trafego, oferta e operacao comercial alinhados para escalar vendas de alto ticket.",
+        heroSubtitle:
+          "Unimos estrategia, midia, CRO e IA comercial para transformar investimento em pipeline previsivel.",
+        primaryCta: "Agendar diagnostico",
+        secondaryCta: "Ver cases",
+        email: "contato@atlasgrowth.studio",
+        phone: "+55 11 4000-1234",
+        whatsapp: "+55 11 98888-0000",
+        calendarUrl: "https://calendly.com/atlasgrowth/diagnostico-estrategico",
+        calendarEmbedUrl: "https://calendly.com/atlasgrowth/diagnostico-estrategico",
+        instagramUrl: "https://instagram.com/atlasgrowth.studio",
+        linkedinUrl: "https://linkedin.com/company/atlas-growth-studio",
+      },
+    },
   });
 
   await prisma.testimonial.createMany({
@@ -98,6 +134,7 @@ async function main() {
       phone: "+55 11 99999-1111",
       company: "Clinica Bella Vita",
       niche: "Estetica",
+      contactPreference: "Reuniao estrategica",
       objective: "Aumentar agenda de procedimentos premium",
       message: "Quero melhorar a previsibilidade da captacao",
       source: "website",

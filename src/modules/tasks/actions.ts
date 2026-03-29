@@ -47,6 +47,7 @@ export async function createTaskAction(formData: FormData) {
 
   revalidatePath("/admin/tasks");
   revalidatePath("/admin");
+  revalidatePath("/admin/notifications");
   redirect("/admin/tasks?success=created");
 }
 
@@ -63,6 +64,7 @@ export async function deleteTaskAction(formData: FormData) {
   });
 
   revalidatePath("/admin/tasks");
+  revalidatePath("/admin/notifications");
   redirect("/admin/tasks?success=deleted");
 }
 
@@ -95,5 +97,6 @@ export async function updateTaskAction(id: string, formData: FormData) {
   });
 
   revalidatePath("/admin/tasks");
+  revalidatePath("/admin/notifications");
   redirect("/admin/tasks?success=updated");
 }

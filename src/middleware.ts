@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { jwtVerify } from "jose";
 
+import { isAdminOnlyAdminPath } from "@/lib/rbac";
+
 const cookieName = "agency-session";
 const secret = new TextEncoder().encode(
   process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET ?? "dev-secret-change-me",
@@ -36,6 +38,10 @@ export async function middleware(request: NextRequest) {
 
       if (pathname.startsWith("/admin") && role === "CLIENT") {
         return applySecurityHeaders(NextResponse.redirect(new URL("/portal", request.url)));
+      }
+
+      if (pathname.startsWith("/admin") && isAdminOnlyAdminPath(pathname) && role !== "ADMIN") {
+        return applySecurityHeaders(NextResponse.redirect(new URL("/admin?error=forbidden", request.url)));
       }
 
       if (pathname.startsWith("/portal") && role !== "CLIENT") {

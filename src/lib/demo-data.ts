@@ -1,7 +1,10 @@
-import type {
+﻿import type {
   ActivityRecord,
   AIRequestRecord,
+  CustomFieldDefinitionRecord,
+  CustomFieldValueRecord,
   AttachmentRecord,
+  AutomationSettingsRecord,
   BlogPostRecord,
   CampaignRecord,
   CaseStudyRecord,
@@ -10,32 +13,55 @@ import type {
   FinancialRecord,
   FAQRecord,
   LeadRecord,
+  MethodologyContentRecord,
   MessageRecord,
+  ProofAssetsContentRecord,
   ProposalRecord,
+  ProjectListRecord,
+  ProjectRecord,
   ServiceRecord,
   SiteSettingsRecord,
   TaskRecord,
+  TaskChecklistItemRecord,
+  TaskCommentRecord,
+  TaskDependencyRecord,
   TestimonialRecord,
+  UserRecord,
   UserSession,
+  WorkTemplateRecord,
+  WorkspaceRecord,
 } from "@/lib/types";
+import { BRAND_COMPANY_NAME } from "@/lib/brand";
+import { defaultSectorCatalog } from "@/lib/sector-content";
 
 export const demoAdminUser: UserSession = {
   id: "user_admin_1",
-  name: "Amanda Rocha",
+  name: "Joice Martins",
   email: "admin@agencia-premium.com",
   role: "ADMIN",
 };
 
+export const demoAccountManagerUser: UserSession = {
+  id: "user_manager_1",
+  name: "Caio Martins",
+  email: "caio@atlasgrowth.studio",
+  role: "ACCOUNT_MANAGER",
+};
+
 export const demoSettings: SiteSettingsRecord = {
-  agencyName: "Atlas Growth Studio",
-  heroTitle: "Trafego, oferta e operacao comercial alinhados para escalar vendas de alto ticket.",
+  agencyName: "Ameni",
+  heroTitle: "Amenize a complexidade potencialize seus resultados",
   heroSubtitle:
-    "Unimos estrategia, midia, CRO e IA comercial para transformar investimento em pipeline previsivel.",
-  primaryCta: "Agendar diagnostico",
-  secondaryCta: "Ver cases",
+    "A Ameni integra estrategia, performance, conteudo, web e automacao para simplificar a operacao, reduzir ruido e acelerar resultados com mais clareza.",
+  primaryCta: "Solicitar diagnostico",
+  secondaryCta: "Agendar reuniao",
   email: "contato@atlasgrowth.studio",
   phone: "+55 11 4000-1234",
   whatsapp: "+55 11 98888-0000",
+  calendarUrl: "https://calendly.com/atlasgrowth/diagnostico-estrategico",
+  calendarEmbedUrl: "https://calendly.com/atlasgrowth/diagnostico-estrategico",
+  instagramUrl: "https://instagram.com/atlasgrowth.studio",
+  linkedinUrl: "https://linkedin.com/company/atlas-growth-studio",
 };
 
 export const demoServices: ServiceRecord[] = [
@@ -66,7 +92,7 @@ export const demoServices: ServiceRecord[] = [
     id: "svc_4",
     name: "Funis e automacao comercial",
     slug: "funis-e-automacao-comercial",
-    description: "Fluxos de qualificação, follow-up e operacao assistida por IA.",
+    description: "Fluxos de qualificaÃ§Ã£o, follow-up e operacao assistida por IA.",
     benefit: "Equipe mais produtiva e menos oportunidades perdidas.",
   },
 ];
@@ -102,6 +128,7 @@ export const demoTestimonials: TestimonialRecord[] = [
 export const demoCaseStudies: CaseStudyRecord[] = [
   {
     id: "case_1",
+    slug: "clinica-premium-com-agenda-mais-previsivel",
     title: "Clinica premium com agenda mais previsivel",
     niche: "Estetica",
     challenge: "Leads inconsistentes e excesso de dependencia de indicacao.",
@@ -116,6 +143,7 @@ export const demoCaseStudies: CaseStudyRecord[] = [
   },
   {
     id: "case_2",
+    slug: "loteamento-de-medio-alto-padrao-com-leads-qualificados",
     title: "Loteamento de medio-alto padrao com leads qualificados",
     niche: "Imobiliario",
     challenge: "Muito volume com pouca qualidade para o time de vendas.",
@@ -138,7 +166,7 @@ export const demoFaqs: FAQRecord[] = [
   },
   {
     id: "faq_2",
-    question: "Vocês atuam so com midia paga?",
+    question: "VocÃªs atuam so com midia paga?",
     answer:
       "Nao. A proposta inclui oferta, criativos, landing pages, CRM, follow-up e IA comercial quando faz sentido para o projeto.",
     order: 2,
@@ -158,6 +186,8 @@ export const demoBlogPosts: BlogPostRecord[] = [
     title: "Como reduzir CPL sem sacrificar qualidade do lead",
     slug: "como-reduzir-cpl-sem-sacrificar-qualidade",
     excerpt: "Os ajustes que mais movem ponteiros quando o problema nao e so a campanha, mas a oferta e a jornada.",
+    content:
+      "Quando o CPL sobe, o primeiro impulso costuma ser mexer em segmentacao, criativo ou verba. Isso faz sentido, mas quase nunca resolve o problema sozinho.\n\nEm operacoes mais maduras, o custo por lead e um reflexo do conjunto: oferta, promessa, criativo, pagina, velocidade do time comercial e experiencia depois do clique. Se a campanha ate atrai atencao, mas a jornada nao sustenta confianca, o algoritmo sente e a eficiencia piora.\n\nO primeiro passo e revisar se a promessa da campanha esta alinhada com o nivel de desejo e maturidade do publico. Muitas marcas anunciam com uma promessa generica e acabam comprando cliques curiosos em vez de demanda qualificada.\n\nDepois disso, vale olhar para a pagina. Uma landing page premium precisa reduzir friccao, elevar percepcao de valor e deixar claro qual e o proximo passo. Quando a experiencia de conversao melhora, o canal responde com mais eficiencia sem necessariamente pedir mais investimento.\n\nOutro ponto decisivo e o retorno comercial. Se o lead chega e encontra demora, abordagem fraca ou falta de contexto, a conta inteira perde potencia. Em muitos cenarios, melhorar follow-up gera mais impacto no resultado do que qualquer ajuste isolado de campanha.\n\nReduzir CPL com criterio nao significa comprar lead barato. Significa comprar atencao certa, conduzir melhor a jornada e transformar investimento em oportunidade real.",
     category: "Performance",
     publishedAt: "2026-02-12T09:00:00.000Z",
   },
@@ -166,10 +196,104 @@ export const demoBlogPosts: BlogPostRecord[] = [
     title: "O que uma agencia premium precisa mostrar no primeiro atendimento",
     slug: "o-que-uma-agencia-premium-precisa-mostrar",
     excerpt: "Estrutura comercial, narrativa e provas que aumentam conversao de diagnostico para proposta.",
+    content:
+      "O primeiro atendimento de uma agencia premium nao pode parecer improvisado. Ele precisa transmitir leitura de negocio, clareza comercial e maturidade operacional desde o inicio.\n\nAntes de vender servicos, a agencia precisa mostrar que entende o estagio da empresa, o tipo de demanda que ela quer atrair e os gargalos que hoje travam crescimento. Isso muda completamente a percepcao da conversa.\n\nOutro ponto importante e a narrativa. Marcas de alto valor nao compram apenas execucao; elas compram seguranca. Quando a agencia explica o processo com clareza, apresenta recortes de casos semelhantes e traduz estrategia em proximos passos objetivos, a venda acontece em um nivel mais consultivo.\n\nA prova tambem precisa ser bem escolhida. Nao basta empilhar numero. O que converte melhor e mostrar contexto: qual era o problema, o que foi feito, o que mudou em demanda, percepcao ou venda.\n\nPor fim, o atendimento premium mostra organizacao. Um follow-up bem escrito, uma proposta coerente e um ritmo claro de comunicacao reforcam aquilo que foi prometido na call. Em outras palavras, a venda comeca antes da assinatura e a experiencia precisa sustentar o ticket desejado.",
     category: "Comercial",
     publishedAt: "2026-02-24T09:00:00.000Z",
   },
 ];
+
+export const demoMethodologyContent: MethodologyContentRecord = {
+  heroEyebrow: "Metodologia",
+  heroTitle: "Um metodo para reduzir complexidade, organizar prioridades e transformar marketing em resultado.",
+  heroDescription:
+    "Nosso metodo combina leitura de negocio, criacao com criterio, execucao disciplinada e melhoria continua para transformar marketing em sistema de crescimento.",
+  heroAside:
+    "A metodologia existe para evitar o erro mais comum de operacoes digitais: anuncios desconectados da marca, conteudo desconectado do comercial e uma experiencia digital que nao sustenta o valor vendido.",
+  processTitle: "Como a metodologia se traduz em execucao real.",
+  processDescription:
+    "Esse processo foi desenhado para aumentar qualidade de decisao, ritmo operacional e coerencia entre marca e resultado.",
+  impactEyebrow: "O que muda na pratica",
+  impactTitle: "Menos canais soltos. Mais sistema.",
+  impactBody: [
+    "Quando a metodologia entra, o marketing deixa de ser uma soma de tarefas e passa a operar como estrutura: oferta mais clara, criativos melhores, paginas mais coerentes, social com direcao, SEO com funcao e uma rotina comercial com mais contexto.",
+    "Esse tipo de integracao aumenta eficiencia, melhora valor percebido e cria base para escalar com menos improviso.",
+  ],
+  ctaTitle: "Quer aplicar essa metodologia no seu contexto comercial?",
+  ctaDescription:
+    "Se fizer sentido, abrimos o diagnostico pela sua fase atual e mostramos onde performance, conteudo, web e marca devem entrar primeiro.",
+  pillars: [
+    {
+      title: "Diagnostico orientado a negocio",
+      description:
+        "Entramos pelo contexto comercial antes de discutir canais. Ticket, ciclo de venda, objecoes e gargalos guiam a estrategia.",
+    },
+    {
+      title: "Performance com narrativa",
+      description:
+        "Midia paga e CRO operam junto com copy, prova, oferta e paginas para reduzir desperdicio e elevar resposta.",
+    },
+    {
+      title: "Organico como ativo",
+      description:
+        "SEO, blog e presenca de busca constroem base proprietaria para que a marca dependa menos de compra constante de alcance.",
+    },
+    {
+      title: "Video e criacao com funcao",
+      description:
+        "Roteiro, captacao, motion e cortes sao pensados para prender atencao, reforcar percepcao e apoiar conversao.",
+    },
+    {
+      title: "Ritmo operacional",
+      description:
+        "SLA, backlog, feedback e leitura executiva garantem velocidade de execucao sem perder qualidade de decisao.",
+    },
+    {
+      title: "Integracao real entre frentes",
+      description:
+        "Branding, social, web, video e midia deixam de disputar prioridade e passam a responder ao mesmo plano de crescimento.",
+    },
+  ],
+};
+
+export const demoProofAssetsContent: ProofAssetsContentRecord = {
+  eyebrow: "Prova visual",
+  title: "Nao mostramos so frases bonitas. Mostramos estrutura, criacao e leitura de operacao.",
+  description:
+    "A prova social mais forte para uma agencia premium nao e apenas o depoimento. E a combinacao entre contexto, captura de resultado, criativo e experiencia digital.",
+  logos: ["Nova Med", "Orion Prime", "Haus Capital", "Clarear Educacao", "Vista Health"],
+  features: [
+    {
+      title: "Dashboards executivos",
+      description: "CAC, CPL, show rate, receita e sinais de funil traduzidos em decisao.",
+    },
+    {
+      title: "Criativos orientados a resposta",
+      description: "Reels, VSLs curtas, UGC premium e anuncios com criterio de conversao.",
+    },
+    {
+      title: "Landing pages de campanha",
+      description: "Estruturas com prova, oferta, narrativa e UX desenhadas para captar.",
+    },
+  ],
+  mockupEyebrow: "Mockup operacional",
+  mockupTitle: "Leitura de crescimento em uma unica composicao.",
+  mockupMetrics: [
+    { value: "+42%", label: "agenda" },
+    { value: "-31%", label: "CPL" },
+    { value: "+18%", label: "show rate" },
+  ],
+  mockupBars: [
+    { label: "Meta Ads", width: "78%" },
+    { label: "Landing page", width: "64%" },
+    { label: "Follow-up comercial", width: "86%" },
+  ],
+  creativeEyebrow: "Hook premium",
+  creativeTitle: "Atencao certa antes do clique certo.",
+  creativeDescription: "Roteiro curto, frame forte e CTA alinhado com valor percebido.",
+  landingEyebrow: "Oferta / prova / CTA",
+  landingHighlight: "Estruturas com narrativa e UX para captar demanda com mais clareza.",
+};
 
 export const demoLeads: LeadRecord[] = [
   {
@@ -179,13 +303,21 @@ export const demoLeads: LeadRecord[] = [
     phone: "+55 11 99999-1111",
     company: "Clinica Bella Vita",
     niche: "Estetica",
+    contactPreference: "Reuniao estrategica",
+    serviceInterest: "Trafego Pago",
+    urgency: "30-dias",
     objective: "Aumentar agenda de procedimentos premium",
     message: "Quero mais previsibilidade de captacao e uma rotina melhor para o comercial.",
     source: "website",
+    landingPage: "/contato",
+    utmSource: "google",
+    utmMedium: "cpc",
+    utmCampaign: "diagnostico-estetica",
     status: "PROPOSAL_SENT",
     tags: ["quente", "premium"],
     notes: "Fez reuniao e gostou do diagnostico.",
-    ownerName: "Amanda Rocha",
+    estimatedTicket: 7000,
+    ownerName: demoAdminUser.name,
     createdAt: "2026-03-10T13:30:00.000Z",
   },
   {
@@ -195,11 +327,15 @@ export const demoLeads: LeadRecord[] = [
     phone: "+55 21 97777-1111",
     company: "Vista Imoveis",
     niche: "Imobiliario",
+    contactPreference: "WhatsApp",
+    serviceInterest: "Web / Landing Pages",
+    urgency: "imediata",
     objective: "Gerar leads para lancamento",
-    source: "indicação",
+    source: "indicaÃ§Ã£o",
     status: "NEGOTIATION",
     tags: ["alto-ticket"],
-    ownerName: "Amanda Rocha",
+    estimatedTicket: 15000,
+    ownerName: demoAdminUser.name,
     createdAt: "2026-03-11T10:15:00.000Z",
   },
   {
@@ -208,11 +344,17 @@ export const demoLeads: LeadRecord[] = [
     email: "juliana@nutriforma.com",
     company: "NutriForma",
     niche: "Saude",
+    contactPreference: "Email",
+    serviceInterest: "Trafego Organico",
+    urgency: "60-90-dias",
     objective: "Escalar vendas de programa online",
     source: "blog",
     status: "CONTACTED",
     tags: ["follow-up"],
-    ownerName: "Amanda Rocha",
+    utmSource: "linkedin",
+    utmCampaign: "insight-growth",
+    estimatedTicket: 3000,
+    ownerName: demoAdminUser.name,
     createdAt: "2026-03-15T17:10:00.000Z",
   },
 ];
@@ -220,6 +362,7 @@ export const demoLeads: LeadRecord[] = [
 export const demoClients: ClientRecord[] = [
   {
     id: "client_1",
+    workspaceId: "workspace_1",
     name: "Henrique Dias",
     companyName: "Orion Imoveis",
     email: "henrique@orionimoveis.com",
@@ -235,6 +378,7 @@ export const demoClients: ClientRecord[] = [
   },
   {
     id: "client_2",
+    workspaceId: "workspace_1",
     name: "Patricia Luz",
     companyName: "Dermacare Prime",
     email: "patricia@dermacareprime.com",
@@ -244,6 +388,96 @@ export const demoClients: ClientRecord[] = [
     contractStatus: "ACTIVE",
     activeChannels: ["Email", "Google Ads"],
     createdAt: "2026-02-04T09:00:00.000Z",
+  },
+];
+
+export const demoWorkspaces: WorkspaceRecord[] = [
+  {
+    id: "workspace_1",
+    name: BRAND_COMPANY_NAME,
+    slug: "ameni-digital-marketing",
+    description: "Workspace central da agencia para comercial, operacao, criacao e entrega.",
+    createdAt: "2026-01-02T09:00:00.000Z",
+  },
+];
+
+export const demoProjects: ProjectRecord[] = [
+  {
+    id: "project_1",
+    workspaceId: "workspace_1",
+    workspaceName: BRAND_COMPANY_NAME,
+    clientId: "client_1",
+    clientName: "Orion Imoveis",
+    ownerId: demoAdminUser.id,
+    ownerName: demoAdminUser.name,
+    name: "Onboarding e growth Q2",
+    slug: "orion-onboarding-growth-q2",
+    summary: "Projeto central de onboarding, campanhas, criativos e rotina comercial do cliente.",
+    status: "ACTIVE",
+    health: "ON_TRACK",
+    startDate: "2026-03-01T09:00:00.000Z",
+    endDate: "2026-05-30T18:00:00.000Z",
+    taskCount: 4,
+    completedTaskCount: 1,
+    createdAt: "2026-03-01T09:00:00.000Z",
+  },
+  {
+    id: "project_2",
+    workspaceId: "workspace_1",
+    workspaceName: BRAND_COMPANY_NAME,
+    clientId: "client_2",
+    clientName: "Dermacare Prime",
+    ownerId: demoAccountManagerUser.id,
+    ownerName: demoAccountManagerUser.name,
+    name: "Sprint de conteudo e performance",
+    slug: "dermacare-sprint-conteudo-performance",
+    summary: "Operacao de social, video e paid com cadencia semanal.",
+    status: "ACTIVE",
+    health: "ATTENTION",
+    startDate: "2026-03-04T09:00:00.000Z",
+    endDate: "2026-04-30T18:00:00.000Z",
+    taskCount: 2,
+    completedTaskCount: 0,
+    createdAt: "2026-03-04T09:00:00.000Z",
+  },
+];
+
+export const demoProjectLists: ProjectListRecord[] = [
+  {
+    id: "list_1",
+    projectId: "project_1",
+    projectName: "Onboarding e growth Q2",
+    name: "Intake e diagnostico",
+    description: "Leitura inicial, reunioes e setup.",
+    color: "#30b27c",
+    order: 1,
+    statusCatalog: ["Intake", "Em andamento", "Em revisao", "Concluido"],
+    taskCount: 2,
+    createdAt: "2026-03-01T09:00:00.000Z",
+  },
+  {
+    id: "list_2",
+    projectId: "project_1",
+    projectName: "Onboarding e growth Q2",
+    name: "Criacao e lancamento",
+    description: "Campanhas, criativos e landing pages.",
+    color: "#e0bb67",
+    order: 2,
+    statusCatalog: ["Briefing", "Produzindo", "Aprovacao", "Publicado"],
+    taskCount: 2,
+    createdAt: "2026-03-02T09:00:00.000Z",
+  },
+  {
+    id: "list_3",
+    projectId: "project_2",
+    projectName: "Sprint de conteudo e performance",
+    name: "Calendario editorial",
+    description: "Planejamento, roteiro, gravacao e aprovacao.",
+    color: "#66e1b1",
+    order: 1,
+    statusCatalog: ["Ideia", "Roteiro", "Edicao", "Aprovacao", "Publicado"],
+    taskCount: 2,
+    createdAt: "2026-03-04T09:00:00.000Z",
   },
 ];
 
@@ -279,21 +513,342 @@ export const demoTasks: TaskRecord[] = [
     title: "Revisar criativos da campanha de captacao",
     description: "Subir tres variacoes de angulo para fundo de funil.",
     status: "IN_PROGRESS",
+    statusLabel: "Produzindo",
     priority: "HIGH",
+    startDate: "2026-03-15T09:00:00.000Z",
     dueDate: "2026-03-18T17:00:00.000Z",
-    ownerName: "Amanda Rocha",
+    estimatedMinutes: 180,
+    trackedMinutes: 95,
+    labels: ["Criativo", "Meta Ads"],
+    workspaceId: "workspace_1",
+    workspaceName: BRAND_COMPANY_NAME,
+    projectId: "project_1",
+    projectName: "Onboarding e growth Q2",
+    listId: "list_2",
+    listName: "Criacao e lancamento",
+    ownerName: demoAdminUser.name,
     clientId: "client_1",
     clientName: "Orion Imoveis",
+    assignees: [
+      { id: demoAdminUser.id, name: demoAdminUser.name, email: demoAdminUser.email, role: demoAdminUser.role },
+      { id: demoAccountManagerUser.id, name: demoAccountManagerUser.name, email: demoAccountManagerUser.email, role: demoAccountManagerUser.role },
+    ],
+    watchers: [{ id: "user_client_1", name: "Henrique Dias", email: "henrique@orionimoveis.com", role: "CLIENT" }],
+    checklistProgress: { completed: 1, total: 3 },
+    commentCount: 2,
+    subtaskCount: 1,
+    blockedByCount: 1,
     createdAt: "2026-03-15T11:00:00.000Z",
   },
   {
     id: "task_2",
     title: "Mandar follow-up da proposta",
     status: "TODO",
+    statusLabel: "A fazer",
     priority: "MEDIUM",
+    labels: ["Comercial"],
+    workspaceId: "workspace_1",
+    workspaceName: BRAND_COMPANY_NAME,
+    projectId: "project_1",
+    projectName: "Onboarding e growth Q2",
+    listId: "list_1",
+    listName: "Intake e diagnostico",
     leadId: "lead_1",
     leadName: "Luciana Araujo",
+    assignees: [{ id: demoAdminUser.id, name: demoAdminUser.name, email: demoAdminUser.email, role: demoAdminUser.role }],
+    watchers: [],
+    checklistProgress: { completed: 0, total: 0 },
+    commentCount: 1,
+    subtaskCount: 0,
+    blockedByCount: 0,
     createdAt: "2026-03-15T14:30:00.000Z",
+  },
+  {
+    id: "task_3",
+    title: "Estruturar landing page de captacao premium",
+    description: "Definir bloco de prova, CTA principal e copy do hero.",
+    status: "REVIEW",
+    statusLabel: "Aprovacao",
+    priority: "HIGH",
+    startDate: "2026-03-13T09:00:00.000Z",
+    dueDate: "2026-03-20T16:00:00.000Z",
+    estimatedMinutes: 240,
+    trackedMinutes: 220,
+    labels: ["LP", "CRO"],
+    workspaceId: "workspace_1",
+    workspaceName: BRAND_COMPANY_NAME,
+    projectId: "project_1",
+    projectName: "Onboarding e growth Q2",
+    listId: "list_2",
+    listName: "Criacao e lancamento",
+    clientId: "client_1",
+    clientName: "Orion Imoveis",
+    assignees: [{ id: demoAccountManagerUser.id, name: demoAccountManagerUser.name, email: demoAccountManagerUser.email, role: demoAccountManagerUser.role }],
+    watchers: [{ id: demoAdminUser.id, name: demoAdminUser.name, email: demoAdminUser.email, role: demoAdminUser.role }],
+    checklistProgress: { completed: 2, total: 2 },
+    commentCount: 1,
+    subtaskCount: 0,
+    blockedByCount: 0,
+    createdAt: "2026-03-13T10:00:00.000Z",
+  },
+  {
+    id: "task_4",
+    title: "Onboarding tecnico de tracking",
+    description: "Checklist de pixels, eventos e UTMs do novo cliente.",
+    status: "DONE",
+    statusLabel: "Concluido",
+    priority: "HIGH",
+    startDate: "2026-03-10T09:00:00.000Z",
+    endDate: "2026-03-12T15:00:00.000Z",
+    estimatedMinutes: 120,
+    trackedMinutes: 135,
+    labels: ["Tracking", "Onboarding"],
+    workspaceId: "workspace_1",
+    workspaceName: BRAND_COMPANY_NAME,
+    projectId: "project_1",
+    projectName: "Onboarding e growth Q2",
+    listId: "list_1",
+    listName: "Intake e diagnostico",
+    clientId: "client_1",
+    clientName: "Orion Imoveis",
+    assignees: [{ id: demoAdminUser.id, name: demoAdminUser.name, email: demoAdminUser.email, role: demoAdminUser.role }],
+    watchers: [],
+    checklistProgress: { completed: 4, total: 4 },
+    commentCount: 0,
+    subtaskCount: 0,
+    blockedByCount: 0,
+    createdAt: "2026-03-10T09:00:00.000Z",
+  },
+  {
+    id: "task_5",
+    title: "Roteiro dos reels da semana",
+    description: "Preparar ganchos e CTA para conteudo short-form.",
+    status: "IN_PROGRESS",
+    statusLabel: "Roteiro",
+    priority: "MEDIUM",
+    startDate: "2026-03-16T09:30:00.000Z",
+    dueDate: "2026-03-19T18:00:00.000Z",
+    estimatedMinutes: 150,
+    trackedMinutes: 60,
+    labels: ["Conteudo", "Video"],
+    workspaceId: "workspace_1",
+    workspaceName: BRAND_COMPANY_NAME,
+    projectId: "project_2",
+    projectName: "Sprint de conteudo e performance",
+    listId: "list_3",
+    listName: "Calendario editorial",
+    clientId: "client_2",
+    clientName: "Dermacare Prime",
+    assignees: [{ id: demoAccountManagerUser.id, name: demoAccountManagerUser.name, email: demoAccountManagerUser.email, role: demoAccountManagerUser.role }],
+    watchers: [{ id: demoAdminUser.id, name: demoAdminUser.name, email: demoAdminUser.email, role: demoAdminUser.role }],
+    checklistProgress: { completed: 0, total: 2 },
+    commentCount: 1,
+    subtaskCount: 0,
+    blockedByCount: 0,
+    createdAt: "2026-03-16T10:00:00.000Z",
+  },
+  {
+    id: "task_6",
+    title: "Ajustar headlines da LP",
+    description: "Subtarefa focada no hero e na secao de prova social.",
+    status: "TODO",
+    statusLabel: "Briefing",
+    priority: "MEDIUM",
+    labels: ["Copy"],
+    workspaceId: "workspace_1",
+    workspaceName: BRAND_COMPANY_NAME,
+    projectId: "project_1",
+    projectName: "Onboarding e growth Q2",
+    listId: "list_2",
+    listName: "Criacao e lancamento",
+    parentTaskId: "task_3",
+    parentTaskTitle: "Estruturar landing page de captacao premium",
+    clientId: "client_1",
+    clientName: "Orion Imoveis",
+    assignees: [{ id: demoAdminUser.id, name: demoAdminUser.name, email: demoAdminUser.email, role: demoAdminUser.role }],
+    watchers: [],
+    checklistProgress: { completed: 0, total: 0 },
+    commentCount: 0,
+    subtaskCount: 0,
+    blockedByCount: 0,
+    createdAt: "2026-03-16T11:00:00.000Z",
+  },
+];
+
+export const demoTaskComments: TaskCommentRecord[] = [
+  {
+    id: "task_comment_1",
+    taskId: "task_1",
+    authorId: demoAdminUser.id,
+    authorName: demoAdminUser.name,
+    body: "Subi a primeira linha de criativos. @Caio pode validar se o gancho conversa com a landing?",
+    mentions: ["Caio"],
+    createdAt: "2026-03-15T15:30:00.000Z",
+  },
+  {
+    id: "task_comment_2",
+    taskId: "task_1",
+    authorId: demoAccountManagerUser.id,
+    authorName: demoAccountManagerUser.name,
+    body: "Sim. Ajustaria apenas o frame de prova social para aproximar mais do ticket premium.",
+    mentions: [],
+    createdAt: "2026-03-15T16:05:00.000Z",
+  },
+  {
+    id: "task_comment_3",
+    taskId: "task_2",
+    authorId: demoAdminUser.id,
+    authorName: demoAdminUser.name,
+    body: "Lead com boa aderencia. Fazer follow-up com CTA de reuniao ainda hoje.",
+    mentions: [],
+    createdAt: "2026-03-15T14:35:00.000Z",
+  },
+  {
+    id: "task_comment_4",
+    taskId: "task_5",
+    authorId: demoAccountManagerUser.id,
+    authorName: demoAccountManagerUser.name,
+    body: "Precisamos alinhar os roteiros com o tema de autoridade da campanha da semana.",
+    mentions: [],
+    createdAt: "2026-03-16T12:00:00.000Z",
+  },
+];
+
+export const demoTaskChecklistItems: TaskChecklistItemRecord[] = [
+  {
+    id: "task_check_1",
+    taskId: "task_1",
+    title: "Aprovar hooks de abertura",
+    done: true,
+    order: 1,
+    assigneeId: demoAdminUser.id,
+    assigneeName: demoAdminUser.name,
+    createdAt: "2026-03-15T12:00:00.000Z",
+  },
+  {
+    id: "task_check_2",
+    taskId: "task_1",
+    title: "Exportar versao 9:16",
+    done: false,
+    order: 2,
+    assigneeId: demoAccountManagerUser.id,
+    assigneeName: demoAccountManagerUser.name,
+    dueDate: "2026-03-17T17:00:00.000Z",
+    createdAt: "2026-03-15T12:10:00.000Z",
+  },
+  {
+    id: "task_check_3",
+    taskId: "task_1",
+    title: "Publicar no board de aprovacao",
+    done: false,
+    order: 3,
+    createdAt: "2026-03-15T12:20:00.000Z",
+  },
+  {
+    id: "task_check_4",
+    taskId: "task_3",
+    title: "Definir CTA principal",
+    done: true,
+    order: 1,
+    createdAt: "2026-03-14T11:00:00.000Z",
+  },
+  {
+    id: "task_check_5",
+    taskId: "task_3",
+    title: "Revisar secao de prova",
+    done: true,
+    order: 2,
+    createdAt: "2026-03-14T11:20:00.000Z",
+  },
+];
+
+export const demoTaskDependencies: TaskDependencyRecord[] = [
+  {
+    id: "task_dep_1",
+    taskId: "task_1",
+    dependsOnTaskId: "task_3",
+    dependsOnTaskTitle: "Estruturar landing page de captacao premium",
+    createdAt: "2026-03-15T11:05:00.000Z",
+  },
+];
+
+export const demoWorkTemplates: WorkTemplateRecord[] = [
+  {
+    id: "template_1",
+    workspaceId: "workspace_1",
+    name: "Onboarding de cliente premium",
+    description: "Cria projeto com listas de intake, criacao, aprovacao e operacao inicial.",
+    scope: "PROJECT",
+    payload: {
+      projectName: "Onboarding premium",
+      lists: [
+        { name: "Intake e diagnostico", statusCatalog: ["Intake", "Em andamento", "Concluido"] },
+        { name: "Criacao e lancamento", statusCatalog: ["Briefing", "Produzindo", "Aprovacao", "Publicado"] },
+        { name: "Operacao recorrente", statusCatalog: ["Planejado", "Em execucao", "Revisao", "Concluido"] },
+      ],
+    },
+    createdAt: "2026-03-01T09:00:00.000Z",
+  },
+  {
+    id: "template_2",
+    workspaceId: "workspace_1",
+    name: "Calendario editorial mensal",
+    description: "Estrutura board de pauta, roteiro, gravacao, edicao e publicacao.",
+    scope: "LIST",
+    payload: {
+      lists: [
+        { name: "Ideias", statusCatalog: ["Ideia", "Selecionada"] },
+        { name: "Producao", statusCatalog: ["Roteiro", "Gravacao", "Edicao"] },
+        { name: "Publicacao", statusCatalog: ["Aprovacao", "Agendado", "Publicado"] },
+      ],
+    },
+    createdAt: "2026-03-04T09:00:00.000Z",
+  },
+];
+
+export const demoCustomFieldDefinitions: CustomFieldDefinitionRecord[] = [
+  {
+    id: "custom_field_1",
+    workspaceId: "workspace_1",
+    name: "Canal principal",
+    key: "canal_principal",
+    entityType: "PROJECT",
+    fieldType: "SELECT",
+    options: { values: ["Meta Ads", "Google Ads", "SEO", "Social Media", "Video"] },
+    required: true,
+    createdAt: "2026-03-01T09:00:00.000Z",
+  },
+  {
+    id: "custom_field_2",
+    workspaceId: "workspace_1",
+    name: "SLA operacional",
+    key: "sla_operacional",
+    entityType: "TASK",
+    fieldType: "NUMBER",
+    options: null,
+    required: false,
+    createdAt: "2026-03-01T09:00:00.000Z",
+  },
+];
+
+export const demoCustomFieldValues: CustomFieldValueRecord[] = [
+  {
+    id: "custom_value_1",
+    definitionId: "custom_field_1",
+    definitionName: "Canal principal",
+    entityType: "PROJECT",
+    entityId: "project_1",
+    value: { selected: "Meta Ads" },
+    createdAt: "2026-03-01T09:00:00.000Z",
+  },
+  {
+    id: "custom_value_2",
+    definitionId: "custom_field_2",
+    definitionName: "SLA operacional",
+    entityType: "TASK",
+    entityId: "task_1",
+    value: { minutes: 180 },
+    createdAt: "2026-03-15T11:00:00.000Z",
   },
 ];
 
@@ -367,7 +922,7 @@ export const demoMessages: MessageRecord[] = [
 export const demoFinancialRecords: FinancialRecord[] = [
   {
     id: "fin_1",
-    title: "Mensalidade Atlas OS - Marco",
+    title: "Mensalidade Ameni Digital Marketing - Marco",
     description: "Retainer mensal de performance e operacao comercial.",
     type: "INVOICE",
     status: "PENDING",
@@ -441,7 +996,7 @@ export const demoActivities: ActivityRecord[] = [
     entityType: "AIRequest",
     entityId: "ai_1",
     description: "IA gerou um follow-up consultivo e salvou como rascunho.",
-    actorName: "Amanda Rocha",
+    actorName: demoAdminUser.name,
     createdAt: "2026-03-15T15:05:00.000Z",
   },
   {
@@ -450,7 +1005,7 @@ export const demoActivities: ActivityRecord[] = [
     entityType: "Campaign",
     entityId: "camp_1",
     description: "Atualizacao de criativos e redistribuicao de verba em conjunto com a equipe.",
-    actorName: "Amanda Rocha",
+    actorName: demoAdminUser.name,
     createdAt: "2026-03-14T16:40:00.000Z",
   },
 ];
@@ -466,6 +1021,43 @@ export const demoDashboardSummary: DashboardSummary = {
   estimatedRevenue: 84200,
 };
 
+export const demoUsers: UserRecord[] = [
+  {
+    id: demoAdminUser.id,
+    name: demoAdminUser.name,
+    email: demoAdminUser.email,
+    role: demoAdminUser.role,
+    createdAt: "2026-01-02T09:00:00.000Z",
+  },
+  {
+    id: demoAccountManagerUser.id,
+    name: demoAccountManagerUser.name,
+    email: demoAccountManagerUser.email,
+    role: demoAccountManagerUser.role,
+    createdAt: "2026-01-05T10:00:00.000Z",
+  },
+  {
+    id: "user_client_1",
+    name: "Henrique Dias",
+    email: "henrique@orionimoveis.com",
+    role: "CLIENT",
+    createdAt: "2026-01-22T09:00:00.000Z",
+  },
+];
+
+export const demoAutomationSettings: AutomationSettingsRecord = {
+  highIntentThreshold: 60,
+  leadSlaImmediateHours: 2,
+  leadSlaThirtyDaysHours: 6,
+  leadSlaSixtyToNinetyDaysHours: 24,
+  leadSlaPlanningHours: 48,
+  leadSlaDefaultHours: 48,
+  leadReminderDelayHours: 3,
+  proposalFollowUpAfterDays: 3,
+  proposalFollowUpChannel: "EMAIL",
+  internalAlertRecipients: "admin@agencia-premium.com, comercial@atlasgrowth.studio",
+};
+
 export function createDemoSnapshot() {
   return {
     settings: structuredClone(demoSettings),
@@ -474,10 +1066,22 @@ export function createDemoSnapshot() {
     caseStudies: structuredClone(demoCaseStudies),
     faqs: structuredClone(demoFaqs),
     blogPosts: structuredClone(demoBlogPosts),
+    methodology: structuredClone(demoMethodologyContent),
+    proofAssets: structuredClone(demoProofAssetsContent),
+    sectorCatalog: structuredClone(defaultSectorCatalog),
     leads: structuredClone(demoLeads),
     clients: structuredClone(demoClients),
+    workspaces: structuredClone(demoWorkspaces),
+    projects: structuredClone(demoProjects),
+    projectLists: structuredClone(demoProjectLists),
     proposals: structuredClone(demoProposals),
     tasks: structuredClone(demoTasks),
+    taskComments: structuredClone(demoTaskComments),
+    taskChecklistItems: structuredClone(demoTaskChecklistItems),
+    taskDependencies: structuredClone(demoTaskDependencies),
+    workTemplates: structuredClone(demoWorkTemplates),
+    customFieldDefinitions: structuredClone(demoCustomFieldDefinitions),
+    customFieldValues: structuredClone(demoCustomFieldValues),
     campaigns: structuredClone(demoCampaigns),
     messages: structuredClone(demoMessages),
     financialRecords: structuredClone(demoFinancialRecords),
@@ -485,5 +1089,8 @@ export function createDemoSnapshot() {
     aiRequests: structuredClone(demoAIRequests),
     activities: structuredClone(demoActivities),
     dashboardSummary: structuredClone(demoDashboardSummary),
+    automationSettings: structuredClone(demoAutomationSettings),
+    users: structuredClone(demoUsers),
   };
 }
+

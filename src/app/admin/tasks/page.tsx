@@ -9,7 +9,7 @@ import { PageToast } from "@/components/ui/page-toast";
 import { Select } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
-import { formatDate } from "@/lib/formatters";
+import { formatDate, formatRelativeHoursFromNow } from "@/lib/formatters";
 import { taskPriorityOptions, taskStatusOptions } from "@/lib/navigation";
 import { listClients } from "@/modules/clients/repository";
 import { listLeads } from "@/modules/leads/repository";
@@ -88,6 +88,7 @@ export default async function TasksPage({
                   <TableHeaderCell>Tarefa</TableHeaderCell>
                   <TableHeaderCell>Status</TableHeaderCell>
                   <TableHeaderCell>Prioridade</TableHeaderCell>
+                  <TableHeaderCell>Responsavel</TableHeaderCell>
                   <TableHeaderCell>Prazo</TableHeaderCell>
                   <TableHeaderCell className="text-right">Acoes</TableHeaderCell>
                 </TableRow>
@@ -103,7 +104,11 @@ export default async function TasksPage({
                       <Badge tone={task.status === "DONE" ? "success" : "neutral"}>{task.status}</Badge>
                     </TableCell>
                     <TableCell>{task.priority}</TableCell>
-                    <TableCell>{formatDate(task.dueDate)}</TableCell>
+                    <TableCell>{task.ownerName ?? "Nao atribuido"}</TableCell>
+                    <TableCell>
+                      <p>{formatDate(task.dueDate)}</p>
+                      {task.dueDate ? <p className="text-xs text-ink-950/55">{formatRelativeHoursFromNow(task.dueDate)}</p> : null}
+                    </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
                         <Link href={`/admin/tasks/${task.id}`}>

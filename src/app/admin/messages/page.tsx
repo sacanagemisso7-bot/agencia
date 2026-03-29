@@ -53,7 +53,7 @@ export default async function MessagesPage({
             <h2 className="font-display text-2xl text-ink-950">Nova mensagem</h2>
             <form action={processMessageQueueAction}>
               <Button size="sm" type="submit" variant="secondary">
-                Processar fila
+                Executar ciclo
               </Button>
             </form>
           </div>

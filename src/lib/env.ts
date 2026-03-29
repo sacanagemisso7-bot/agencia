@@ -24,6 +24,11 @@ export const env = {
   cloudinaryCloudName: process.env.CLOUDINARY_CLOUD_NAME ?? "",
   cloudinaryUploadPreset: process.env.CLOUDINARY_UPLOAD_PRESET ?? "",
   observabilityWebhookUrl: process.env.OBSERVABILITY_WEBHOOK_URL ?? "",
+  gaMeasurementId: process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? "",
+  posthogKey: process.env.NEXT_PUBLIC_POSTHOG_KEY ?? "",
+  posthogHost: process.env.NEXT_PUBLIC_POSTHOG_HOST ?? "https://app.posthog.com",
+  publicSentryDsn: process.env.NEXT_PUBLIC_SENTRY_DSN ?? "",
+  sentryDsn: process.env.SENTRY_DSN ?? "",
   databaseUrl: process.env.DATABASE_URL ?? "",
 };
 

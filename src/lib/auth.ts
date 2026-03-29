@@ -45,15 +45,16 @@ export async function getSessionUser(): Promise<UserSession | null> {
 
   try {
     const { payload } = await jwtVerify(token, secret);
+    const email = String(payload.email ?? demoAdminUser.email);
+    const isPrimaryAdmin = email === env.adminEmail || email === demoAdminUser.email;
 
     return {
       id: payload.sub ?? demoAdminUser.id,
-      name: String(payload.name ?? demoAdminUser.name),
-      email: String(payload.email ?? demoAdminUser.email),
+      name: isPrimaryAdmin ? demoAdminUser.name : String(payload.name ?? demoAdminUser.name),
+      email,
       role: (payload.role as UserSession["role"]) ?? demoAdminUser.role,
     };
   } catch {
     return null;
   }
 }
-

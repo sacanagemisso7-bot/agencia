@@ -54,6 +54,13 @@ export async function recordActivity(input: ActivityInput) {
         entityId: input.entityId,
         description: input.description,
         actorName: input.actorName ?? demoAdminUser.name,
+        leadId: input.leadId,
+        clientId: input.clientId,
+        proposalId: input.proposalId,
+        taskId: input.taskId,
+        campaignId: input.campaignId,
+        messageId: input.messageId,
+        aiRequestId: input.aiRequestId,
         createdAt: new Date().toISOString(),
       });
 

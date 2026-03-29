@@ -1,9 +1,11 @@
 import { AdminShell } from "@/components/admin/admin-shell";
 import { Card } from "@/components/ui/card";
 import { formatDateTime } from "@/lib/formatters";
+import { requireAdminUser } from "@/modules/auth/guards";
 import { listActivityLogs } from "@/modules/logs/repository";
 
 export default async function LogsPage() {
+  await requireAdminUser();
   const logs = await listActivityLogs();
 
   return (

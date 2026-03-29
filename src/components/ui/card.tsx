@@ -6,5 +6,5 @@ export function Card({
   className,
   ...props
 }: HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("glass-panel", className)} {...props} />;
+  return <div className={cn("glass-panel relative overflow-hidden", className)} {...props} />;
 }

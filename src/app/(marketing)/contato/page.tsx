@@ -1,46 +1,103 @@
+﻿import type { Metadata } from "next";
+import { CalendarDays, Mail, PhoneCall } from "lucide-react";
+
 import { LeadCaptureForm } from "@/components/marketing/lead-capture-form";
-import { SectionHeading } from "@/components/marketing/section-heading";
-import { Card } from "@/components/ui/card";
+import { PageHero } from "@/components/marketing/page-hero";
+import { SchedulingEmbedSection } from "@/components/marketing/scheduling-embed-section";
+import { StructuredData } from "@/components/marketing/structured-data";
 import { PageToast } from "@/components/ui/page-toast";
+import { buildPageMetadata, getAbsoluteUrl, getSiteName } from "@/lib/seo";
+import { getSiteContent } from "@/modules/site-content/repository";
+
+export const metadata: Metadata = buildPageMetadata({
+  title: "Contato | Ameni",
+  description:
+    "Solicite um diagnostico estrategico da sua marca e entenda como growth, conteudo, video, web e branding podem operar juntos.",
+  path: "/contato",
+});
+
+const contactItems = [
+  {
+    label: "Email",
+    icon: Mail,
+    field: "email",
+  },
+  {
+    label: "Telefone",
+    icon: PhoneCall,
+    field: "phone",
+  },
+  {
+    label: "Agendamento",
+    icon: CalendarDays,
+    field: "calendar",
+  },
+] as const;
 
 export default async function ContatoPage({
   searchParams,
 }: {
-  searchParams?: Promise<{ success?: string }>;
+  searchParams?: Promise<{ success?: string; service?: string }>;
 }) {
   const query = await searchParams;
+  const content = await getSiteContent();
 
   return (
-    <main className="container-shell py-20">
-      <PageToast
-        message={query?.success === "1" ? "Recebemos seu contato e o lead entrou no CRM." : undefined}
+    <main>
+      <StructuredData
+        data={{
+          "@context": "https://schema.org",
+          "@type": "ContactPage",
+          name: `${getSiteName()} | Contato`,
+          url: getAbsoluteUrl("/contato"),
+          description:
+            "Pagina de contato com formulario de diagnostico, agenda embutida e canais diretos da Ameni.",
+        }}
+        id="contact-page-schema"
       />
-      <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
-        <div>
-          <SectionHeading
-            eyebrow="Contato"
-            title="Vamos mapear a operacao e identificar os gargalos de crescimento."
-            description="Se preferir, nos chame pelo WhatsApp ou email. O formulario abaixo ja cria o lead diretamente no CRM."
-          />
-          <Card className="mt-8 space-y-4 p-6">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-500">Email</p>
-              <p className="mt-1 text-sm text-ink-950/70">contato@atlasgrowth.studio</p>
-            </div>
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-500">WhatsApp</p>
-              <p className="mt-1 text-sm text-ink-950/70">+55 11 98888-0000</p>
-            </div>
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-500">Agendamento</p>
-              <p className="mt-1 text-sm text-ink-950/70">Resposta inicial em ate 1 dia util.</p>
-            </div>
-          </Card>
+      <PageToast message={query?.success === "1" ? "Recebemos seu contato e o lead entrou no CRM." : undefined} />
+      <PageHero
+        aside="Se fizer sentido, nos envie contexto sobre ticket, canal principal, objetivo de crescimento e o que voce sente que hoje esta travando a operacao."
+        description="Conte rapidamente o momento da empresa e devolvemos uma leitura inicial sobre posicionamento, canais, estrutura e proximos passos."
+        eyebrow="Contato"
+        title="Vamos desenhar um diagnostico comercial e estrategico para a sua marca."
+      />
+
+      <section className="container-shell py-12 sm:py-16">
+        <div className="grid gap-8 lg:grid-cols-[0.82fr_1.18fr]">
+          <div className="grid gap-4">
+            {contactItems.map((item) => {
+              const value =
+                item.field === "email"
+                  ? content.settings.email
+                  : item.field === "phone"
+                    ? content.settings.phone
+                    : "Resposta inicial em ate 1 dia util";
+
+              return (
+                <article className="rounded-[28px] border border-white/10 bg-white/[0.04] p-6" key={item.label}>
+                  <div className="flex size-11 items-center justify-center rounded-2xl border border-white/12 bg-black/20 text-emerald-300">
+                    <item.icon className="size-5" />
+                  </div>
+                  <p className="mt-5 text-xs font-semibold uppercase tracking-[0.22em] text-white/42">{item.label}</p>
+                  <p className="mt-3 text-base leading-8 text-white/72">{value}</p>
+                </article>
+              );
+            })}
+          </div>
+
+          <div className="rounded-[34px] border border-white/10 bg-gradient-to-br from-white/[0.06] to-emerald-400/10 p-6 lg:p-8">
+            <LeadCaptureForm defaultServiceInterest={query?.service} theme="dark" />
+          </div>
         </div>
-        <Card className="p-8">
-          <LeadCaptureForm />
-        </Card>
-      </div>
+      </section>
+
+      <SchedulingEmbedSection
+        calendarEmbedUrl={content.settings.calendarEmbedUrl}
+        calendarUrl={content.settings.calendarUrl}
+        whatsapp={content.settings.whatsapp}
+      />
     </main>
   );
 }
+

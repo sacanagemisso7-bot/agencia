@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { AdminShell } from "@/components/admin/admin-shell";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -9,9 +10,14 @@ import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { listAttachments } from "@/modules/attachments/repository";
 import { proposalStatusOptions } from "@/lib/navigation";
+import { formatCurrency, formatDateTime } from "@/lib/formatters";
 import { listClients } from "@/modules/clients/repository";
 import { listLeads } from "@/modules/leads/repository";
-import { updateProposalAction } from "@/modules/proposals/actions";
+import {
+  registerProposalDecisionAction,
+  sendProposalForApprovalAction,
+  updateProposalAction,
+} from "@/modules/proposals/actions";
 import { getProposalById } from "@/modules/proposals/repository";
 
 export default async function ProposalDetailPage({
@@ -36,7 +42,19 @@ export default async function ProposalDetailPage({
 
   return (
     <AdminShell title="Editar proposta" description="Refine o escopo, valor, relacionamento e status comercial.">
-      <PageToast message={query?.success === "attachment" ? "Anexo adicionado a proposta." : undefined} />
+      <PageToast
+        message={
+          query?.success === "attachment"
+            ? "Anexo adicionado a proposta."
+            : query?.success === "sent"
+              ? "Proposta enviada para aprovacao."
+              : query?.success === "accepted"
+                ? "Proposta aceita e encaminhada para fechamento."
+                : query?.success === "rejected"
+                  ? "Proposta marcada como recusada."
+                  : undefined
+        }
+      />
       <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
         <Card className="p-6">
           <form action={updateProposalAction.bind(null, proposal.id)} className="grid gap-4">
@@ -72,6 +90,49 @@ export default async function ProposalDetailPage({
           </form>
         </Card>
         <div className="space-y-6">
+          <Card className="p-6">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-500">Fechamento</p>
+            <h2 className="mt-2 font-display text-2xl text-ink-950">Status comercial</h2>
+            <div className="mt-6 space-y-3 text-sm text-ink-950/66">
+              <p>Conta: {proposal.clientName ?? proposal.leadName ?? "Sem vinculo"}</p>
+              <p>Valor: {formatCurrency(proposal.price)}</p>
+              <p>Atualizado em: {formatDateTime(proposal.createdAt)}</p>
+            </div>
+            <div className="mt-5 flex flex-wrap gap-2">
+              <Badge tone={proposal.status === "ACCEPTED" ? "success" : proposal.status === "REJECTED" ? "warning" : "neutral"}>
+                {proposal.status}
+              </Badge>
+            </div>
+            <div className="mt-6 grid gap-3">
+              {proposal.status === "DRAFT" ? (
+                <form action={sendProposalForApprovalAction}>
+                  <input name="id" type="hidden" value={proposal.id} />
+                  <Button className="w-full justify-center" type="submit">
+                    Enviar para aprovacao
+                  </Button>
+                </form>
+              ) : null}
+              {proposal.status !== "ACCEPTED" ? (
+                <form action={registerProposalDecisionAction}>
+                  <input name="id" type="hidden" value={proposal.id} />
+                  <input name="decision" type="hidden" value="ACCEPTED" />
+                  <Button className="w-full justify-center" type="submit" variant="secondary">
+                    Registrar aceite
+                  </Button>
+                </form>
+              ) : null}
+              {proposal.status !== "REJECTED" ? (
+                <form action={registerProposalDecisionAction}>
+                  <input name="id" type="hidden" value={proposal.id} />
+                  <input name="decision" type="hidden" value="REJECTED" />
+                  <Button className="w-full justify-center" type="submit" variant="ghost">
+                    Registrar recusa
+                  </Button>
+                </form>
+              ) : null}
+            </div>
+          </Card>
+
           <Card className="p-6">
             <h2 className="font-display text-2xl text-ink-950">Anexar arquivo</h2>
             <form action="/api/uploads" className="mt-5 grid gap-4" encType="multipart/form-data" method="post">

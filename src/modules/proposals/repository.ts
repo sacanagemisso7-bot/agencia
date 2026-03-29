@@ -210,3 +210,74 @@ export async function updateProposal(id: string, input: ProposalInput) {
     },
   );
 }
+
+export async function updateProposalStatus(id: string, status: ProposalRecord["status"]) {
+  return withFallback(
+    async () => {
+      if (!prisma) {
+        throw new Error("No database client");
+      }
+
+      const proposal = await prisma.proposal.update({
+        where: { id },
+        data: { status },
+        include: {
+          client: true,
+          lead: true,
+        },
+      });
+
+      return mapProposal(proposal);
+    },
+    () => {
+      const proposal = demoStore.proposals.find((item) => item.id === id);
+      if (proposal) {
+        proposal.status = status;
+      }
+      return proposal ?? null;
+    },
+  );
+}
+
+export async function updateProposalLinks(id: string, input: { clientId?: string | null; leadId?: string | null }) {
+  return withFallback(
+    async () => {
+      if (!prisma) {
+        throw new Error("No database client");
+      }
+
+      const proposal = await prisma.proposal.update({
+        where: { id },
+        data: {
+          clientId: typeof input.clientId === "undefined" ? undefined : input.clientId,
+          leadId: typeof input.leadId === "undefined" ? undefined : input.leadId,
+        },
+        include: {
+          client: true,
+          lead: true,
+        },
+      });
+
+      return mapProposal(proposal);
+    },
+    () => {
+      const proposal = demoStore.proposals.find((item) => item.id === id);
+      const client = demoStore.clients.find((item) => item.id === input.clientId);
+      const lead = demoStore.leads.find((item) => item.id === input.leadId);
+
+      if (proposal) {
+        if (typeof input.clientId !== "undefined") {
+          proposal.clientId = input.clientId ?? undefined;
+          proposal.clientName = client?.companyName;
+        }
+
+        if (typeof input.leadId !== "undefined") {
+          proposal.leadId = input.leadId ?? undefined;
+          proposal.leadName = lead?.name;
+        }
+      }
+
+      return proposal ?? null;
+    },
+  );
+}

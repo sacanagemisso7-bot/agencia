@@ -1,7 +1,80 @@
+import { Prisma } from "@prisma/client";
+
+import {
+  resolveAgencyName,
+  resolveHeroSubtitle,
+  resolveHeroTitle,
+  resolvePrimaryCta,
+  resolveSecondaryCta,
+} from "@/lib/brand";
 import { slugify } from "@/lib/utils";
 import { demoStore } from "@/lib/demo-store";
 import { prisma, withFallback } from "@/lib/prisma";
-import type { FAQRecord, ServiceRecord, SiteContentBundle, SiteSettingsRecord, TestimonialRecord } from "@/lib/types";
+import type { SectorPageContent } from "@/lib/sector-content";
+import type {
+  BlogPostRecord,
+  CaseStudyRecord,
+  FAQRecord,
+  MethodologyContentRecord,
+  ProofAssetsContentRecord,
+  ServiceRecord,
+  SiteContentBundle,
+  SiteSettingsRecord,
+  TestimonialRecord,
+} from "@/lib/types";
+
+function normalizeSiteSettings(settings?: Partial<SiteSettingsRecord> | null): SiteSettingsRecord {
+  return {
+    ...demoStore.settings,
+    ...(settings ?? {}),
+    agencyName: resolveAgencyName(settings?.agencyName ?? demoStore.settings.agencyName),
+    heroTitle: resolveHeroTitle(settings?.heroTitle ?? demoStore.settings.heroTitle),
+    heroSubtitle: resolveHeroSubtitle(settings?.heroSubtitle ?? demoStore.settings.heroSubtitle),
+    primaryCta: resolvePrimaryCta(settings?.primaryCta ?? demoStore.settings.primaryCta),
+    secondaryCta: resolveSecondaryCta(settings?.secondaryCta ?? demoStore.settings.secondaryCta),
+  };
+}
+
+function normalizeMethodologyContent(settings?: Partial<MethodologyContentRecord> | null): MethodologyContentRecord {
+  return {
+    ...demoStore.methodology,
+    ...(settings ?? {}),
+    pillars: settings?.pillars ?? demoStore.methodology.pillars,
+    impactBody: settings?.impactBody ?? demoStore.methodology.impactBody,
+  };
+}
+
+function normalizeProofAssetsContent(settings?: Partial<ProofAssetsContentRecord> | null): ProofAssetsContentRecord {
+  return {
+    ...demoStore.proofAssets,
+    ...(settings ?? {}),
+    logos: settings?.logos ?? demoStore.proofAssets.logos,
+    features: settings?.features ?? demoStore.proofAssets.features,
+    mockupMetrics: settings?.mockupMetrics ?? demoStore.proofAssets.mockupMetrics,
+    mockupBars: settings?.mockupBars ?? demoStore.proofAssets.mockupBars,
+  };
+}
+
+function normalizeSectorCatalog(settings?: SectorPageContent[] | null): SectorPageContent[] {
+  return settings?.length ? settings : demoStore.sectorCatalog;
+}
+
+async function upsertSiteSetting(key: string, value: Prisma.InputJsonValue) {
+  if (!prisma) {
+    throw new Error("No database client");
+  }
+
+  await prisma.siteSetting.upsert({
+    where: { key },
+    update: {
+      value,
+    },
+    create: {
+      key,
+      value,
+    },
+  });
+}
 
 export async function getSiteContent(): Promise<SiteContentBundle> {
   return withFallback(
@@ -14,6 +87,8 @@ export async function getSiteContent(): Promise<SiteContentBundle> {
           caseStudies: demoStore.caseStudies,
           faqs: demoStore.faqs,
           blogPosts: demoStore.blogPosts,
+          methodology: demoStore.methodology,
+          proofAssets: demoStore.proofAssets,
         };
       }
 
@@ -28,9 +103,15 @@ export async function getSiteContent(): Promise<SiteContentBundle> {
 
       const mappedSettings =
         settings.find((item) => item.key === "marketing.hero")?.value as SiteContentBundle["settings"] | undefined;
+      const mappedMethodology = settings.find((item) => item.key === "marketing.methodology")?.value as
+        | MethodologyContentRecord
+        | undefined;
+      const mappedProofAssets = settings.find((item) => item.key === "marketing.proofAssets")?.value as
+        | ProofAssetsContentRecord
+        | undefined;
 
       return {
-        settings: mappedSettings ?? demoStore.settings,
+        settings: normalizeSiteSettings(mappedSettings),
         services: services.map((service) => ({
           id: service.id,
           name: service.name,
@@ -49,6 +130,7 @@ export async function getSiteContent(): Promise<SiteContentBundle> {
         })),
         caseStudies: caseStudies.map((caseStudy) => ({
           id: caseStudy.id,
+          slug: slugify(caseStudy.title),
           title: caseStudy.title,
           niche: caseStudy.niche,
           challenge: caseStudy.challenge,
@@ -68,45 +150,109 @@ export async function getSiteContent(): Promise<SiteContentBundle> {
           title: post.title,
           slug: post.slug,
           excerpt: post.excerpt,
+          content: post.content,
           category: post.category,
           publishedAt: post.publishedAt?.toISOString(),
         })),
+        methodology: normalizeMethodologyContent(mappedMethodology),
+        proofAssets: normalizeProofAssetsContent(mappedProofAssets),
       };
     },
     () => ({
-      settings: demoStore.settings,
+      settings: normalizeSiteSettings(demoStore.settings),
       services: demoStore.services,
       testimonials: demoStore.testimonials,
       caseStudies: demoStore.caseStudies,
       faqs: demoStore.faqs,
       blogPosts: demoStore.blogPosts,
+      methodology: demoStore.methodology,
+      proofAssets: demoStore.proofAssets,
     }),
   );
+}
+
+export async function getSectorCmsCatalog(): Promise<SectorPageContent[]> {
+  return withFallback(
+    async () => {
+      if (!prisma) {
+        return demoStore.sectorCatalog;
+      }
+
+      const setting = await prisma.siteSetting.findUnique({
+        where: { key: "marketing.sectors" },
+      });
+
+      return normalizeSectorCatalog((setting?.value as SectorPageContent[] | null) ?? null);
+    },
+    () => demoStore.sectorCatalog,
+  );
+}
+
+export async function getCaseStudyBySlug(slug: string): Promise<CaseStudyRecord | null> {
+  const content = await getSiteContent();
+  return content.caseStudies.find((caseStudy) => caseStudy.slug === slug) ?? null;
+}
+
+export async function getBlogPostBySlug(slug: string): Promise<BlogPostRecord | null> {
+  const content = await getSiteContent();
+  return content.blogPosts.find((post) => post.slug === slug) ?? null;
 }
 
 export async function updateSiteSettings(settings: SiteSettingsRecord) {
   return withFallback(
     async () => {
-      if (!prisma) {
-        throw new Error("No database client");
-      }
+      await upsertSiteSetting("marketing.hero", normalizeSiteSettings(settings));
 
-      await prisma.siteSetting.upsert({
-        where: { key: "marketing.hero" },
-        update: {
-          value: settings,
-        },
-        create: {
-          key: "marketing.hero",
-          value: settings,
-        },
-      });
-
-      return settings;
+      return normalizeSiteSettings(settings);
     },
     () => {
-      demoStore.settings = settings;
-      return settings;
+      demoStore.settings = normalizeSiteSettings(settings);
+      return demoStore.settings;
+    },
+  );
+}
+
+export async function updateMethodologyContent(settings: MethodologyContentRecord) {
+  const normalized = normalizeMethodologyContent(settings);
+
+  return withFallback(
+    async () => {
+      await upsertSiteSetting("marketing.methodology", normalized);
+      return normalized;
+    },
+    () => {
+      demoStore.methodology = normalized;
+      return demoStore.methodology;
+    },
+  );
+}
+
+export async function updateProofAssetsContent(settings: ProofAssetsContentRecord) {
+  const normalized = normalizeProofAssetsContent(settings);
+
+  return withFallback(
+    async () => {
+      await upsertSiteSetting("marketing.proofAssets", normalized);
+      return normalized;
+    },
+    () => {
+      demoStore.proofAssets = normalized;
+      return demoStore.proofAssets;
+    },
+  );
+}
+
+export async function updateSectorCatalog(settings: SectorPageContent[]) {
+  const normalized = normalizeSectorCatalog(settings);
+
+  return withFallback(
+    async () => {
+      await upsertSiteSetting("marketing.sectors", normalized);
+      return normalized;
+    },
+    () => {
+      demoStore.sectorCatalog = normalized;
+      return demoStore.sectorCatalog;
     },
   );
 }
@@ -227,6 +373,234 @@ export async function createFAQEntry(input: Omit<FAQRecord, "id" | "order"> & { 
 
       demoStore.faqs.push(faq);
       return faq;
+    },
+  );
+}
+
+export async function createCaseStudyEntry(input: Omit<CaseStudyRecord, "id" | "slug">) {
+  return withFallback(
+    async () => {
+      if (!prisma) {
+        throw new Error("No database client");
+      }
+
+      const caseStudy = await prisma.caseStudy.create({
+        data: {
+          title: input.title,
+          niche: input.niche,
+          challenge: input.challenge,
+          solution: input.solution,
+          result: input.result,
+          metrics: input.metrics ?? {},
+          featured: input.featured ?? false,
+        },
+      });
+
+      return {
+        id: caseStudy.id,
+        slug: slugify(caseStudy.title),
+        title: caseStudy.title,
+        niche: caseStudy.niche,
+        challenge: caseStudy.challenge,
+        solution: caseStudy.solution,
+        result: caseStudy.result,
+        metrics: (caseStudy.metrics ?? {}) as Record<string, string | number>,
+        featured: caseStudy.featured,
+      } satisfies CaseStudyRecord;
+    },
+    () => {
+      const caseStudy = {
+        id: `case_${Math.random().toString(36).slice(2, 10)}`,
+        slug: slugify(input.title),
+        title: input.title,
+        niche: input.niche,
+        challenge: input.challenge,
+        solution: input.solution,
+        result: input.result,
+        metrics: input.metrics ?? {},
+        featured: input.featured ?? false,
+      } satisfies CaseStudyRecord;
+
+      demoStore.caseStudies.unshift(caseStudy);
+      return caseStudy;
+    },
+  );
+}
+
+export async function updateCaseStudyEntry(id: string, input: Omit<CaseStudyRecord, "id" | "slug">) {
+  return withFallback(
+    async () => {
+      if (!prisma) {
+        throw new Error("No database client");
+      }
+
+      const caseStudy = await prisma.caseStudy.update({
+        where: { id },
+        data: {
+          title: input.title,
+          niche: input.niche,
+          challenge: input.challenge,
+          solution: input.solution,
+          result: input.result,
+          metrics: input.metrics ?? {},
+          featured: input.featured ?? false,
+        },
+      });
+
+      return {
+        id: caseStudy.id,
+        slug: slugify(caseStudy.title),
+        title: caseStudy.title,
+        niche: caseStudy.niche,
+        challenge: caseStudy.challenge,
+        solution: caseStudy.solution,
+        result: caseStudy.result,
+        metrics: (caseStudy.metrics ?? {}) as Record<string, string | number>,
+        featured: caseStudy.featured,
+      } satisfies CaseStudyRecord;
+    },
+    () => {
+      const caseStudy = demoStore.caseStudies.find((item) => item.id === id);
+
+      if (caseStudy) {
+        Object.assign(caseStudy, {
+          ...input,
+          slug: slugify(input.title),
+        });
+      }
+
+      return caseStudy ?? null;
+    },
+  );
+}
+
+export async function deleteCaseStudyEntry(id: string) {
+  return withFallback(
+    async () => {
+      if (!prisma) {
+        throw new Error("No database client");
+      }
+
+      return prisma.caseStudy.delete({
+        where: { id },
+      });
+    },
+    () => {
+      const index = demoStore.caseStudies.findIndex((item) => item.id === id);
+      if (index >= 0) {
+        demoStore.caseStudies.splice(index, 1);
+      }
+      return null;
+    },
+  );
+}
+
+export async function createBlogPostEntry(input: Omit<BlogPostRecord, "id" | "slug">) {
+  return withFallback(
+    async () => {
+      if (!prisma) {
+        throw new Error("No database client");
+      }
+
+      const post = await prisma.blogPost.create({
+        data: {
+          title: input.title,
+          slug: slugify(input.title),
+          excerpt: input.excerpt,
+          content: input.content,
+          category: input.category,
+          publishedAt: input.publishedAt ? new Date(input.publishedAt) : null,
+        },
+      });
+
+      return {
+        id: post.id,
+        title: post.title,
+        slug: post.slug,
+        excerpt: post.excerpt,
+        content: post.content,
+        category: post.category,
+        publishedAt: post.publishedAt?.toISOString(),
+      } satisfies BlogPostRecord;
+    },
+    () => {
+      const post = {
+        id: `blog_${Math.random().toString(36).slice(2, 10)}`,
+        title: input.title,
+        slug: slugify(input.title),
+        excerpt: input.excerpt,
+        content: input.content,
+        category: input.category,
+        publishedAt: input.publishedAt ?? undefined,
+      } satisfies BlogPostRecord;
+
+      demoStore.blogPosts.unshift(post);
+      return post;
+    },
+  );
+}
+
+export async function updateBlogPostEntry(id: string, input: Omit<BlogPostRecord, "id" | "slug">) {
+  return withFallback(
+    async () => {
+      if (!prisma) {
+        throw new Error("No database client");
+      }
+
+      const post = await prisma.blogPost.update({
+        where: { id },
+        data: {
+          title: input.title,
+          slug: slugify(input.title),
+          excerpt: input.excerpt,
+          content: input.content,
+          category: input.category,
+          publishedAt: input.publishedAt ? new Date(input.publishedAt) : null,
+        },
+      });
+
+      return {
+        id: post.id,
+        title: post.title,
+        slug: post.slug,
+        excerpt: post.excerpt,
+        content: post.content,
+        category: post.category,
+        publishedAt: post.publishedAt?.toISOString(),
+      } satisfies BlogPostRecord;
+    },
+    () => {
+      const post = demoStore.blogPosts.find((item) => item.id === id);
+
+      if (post) {
+        Object.assign(post, {
+          ...input,
+          slug: slugify(input.title),
+        });
+      }
+
+      return post ?? null;
+    },
+  );
+}
+
+export async function deleteBlogPostEntry(id: string) {
+  return withFallback(
+    async () => {
+      if (!prisma) {
+        throw new Error("No database client");
+      }
+
+      return prisma.blogPost.delete({
+        where: { id },
+      });
+    },
+    () => {
+      const index = demoStore.blogPosts.findIndex((item) => item.id === id);
+      if (index >= 0) {
+        demoStore.blogPosts.splice(index, 1);
+      }
+      return null;
     },
   );
 }

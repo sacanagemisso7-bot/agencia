@@ -1,11 +1,11 @@
-import { processQueuedMessages } from "../src/modules/messages/queue";
+import { runAutomationCycle } from "../src/modules/automation/runner";
 
 async function main() {
-  const result = await processQueuedMessages();
+  const result = await runAutomationCycle();
   console.log(
     JSON.stringify(
       {
-        message: "Queue processed",
+        message: "Automation cycle processed",
         ...result,
       },
       null,
