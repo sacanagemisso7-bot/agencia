@@ -23,6 +23,22 @@ import type {
   TestimonialRecord,
 } from "@/lib/types";
 
+const CURRENT_MARKETING_WHATSAPP = "+55 42 98891-6791";
+
+function resolveMarketingWhatsapp(value?: string | null) {
+  const digits = value?.replace(/\D/g, "") ?? "";
+
+  if (!digits) {
+    return CURRENT_MARKETING_WHATSAPP;
+  }
+
+  if (digits === "5511988880000" || digits === "11988880000") {
+    return CURRENT_MARKETING_WHATSAPP;
+  }
+
+  return value ?? CURRENT_MARKETING_WHATSAPP;
+}
+
 function normalizeSiteSettings(settings?: Partial<SiteSettingsRecord> | null): SiteSettingsRecord {
   return {
     ...demoStore.settings,
@@ -32,6 +48,7 @@ function normalizeSiteSettings(settings?: Partial<SiteSettingsRecord> | null): S
     heroSubtitle: resolveHeroSubtitle(settings?.heroSubtitle ?? demoStore.settings.heroSubtitle),
     primaryCta: resolvePrimaryCta(settings?.primaryCta ?? demoStore.settings.primaryCta),
     secondaryCta: resolveSecondaryCta(settings?.secondaryCta ?? demoStore.settings.secondaryCta),
+    whatsapp: resolveMarketingWhatsapp(settings?.whatsapp ?? demoStore.settings.whatsapp),
   };
 }
 
