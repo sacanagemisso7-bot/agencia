@@ -4,7 +4,7 @@ export const marketingNavigation = [
   { href: "/", label: "Home" },
   { href: "/sobre", label: "Sobre" },
   { href: "/metodologia", label: "Metodologia" },
-  { href: "/servicos", label: "Servicos" },
+  { href: "/servicos", label: "Serviços" },
   { href: "/setores", label: "Setores" },
   { href: "/cases", label: "Cases" },
   { href: "/insights", label: "Insights" },
@@ -38,8 +38,7 @@ export function getAdminNavigation(role: UserSession["role"]) {
   }
 
   return adminNavigation.filter(
-    (item) =>
-      !["Automações", "Financeiro", "Time", "CMS", "Logs"].includes(item.label),
+    (item) => !["Automações", "Financeiro", "Time", "CMS", "Logs"].includes(item.label),
   );
 }
 

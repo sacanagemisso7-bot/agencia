@@ -54,8 +54,8 @@ export function SiteFooter({
                 <AmeniLogo name={brandName} theme={light ? "light" : "dark"} />
               </div>
               <p className={cn("mt-5 max-w-md text-sm leading-8", light ? "text-emerald-950/64" : "text-mist-100/58")}>
-                {getBrandSlogan()}. Estrategia, performance, conteudo, web e automacao em uma operacao pensada para
-                reduzir ruido, simplificar decisoes e acelerar resultado.
+                {getBrandSlogan()}. Estratégia, tráfego, conteúdo, social media, web e posicionamento em uma operação
+                pensada para reduzir ruído, simplificar decisões e acelerar resultado.
               </p>
               <div className={cn("mt-7 flex flex-wrap gap-3 text-sm", light ? "text-emerald-950/64" : "text-mist-100/64")}>
                 <Link className={cn("inline-flex items-center gap-2 transition", light ? "hover:text-emerald-950" : "hover:text-white")} href={instagramUrl} rel="noreferrer" target="_blank">
@@ -76,13 +76,13 @@ export function SiteFooter({
                 )}
                 href="/contato"
               >
-                Iniciar conversa estrategica
+                Iniciar conversa estratégica
                 <MoveUpRight className="size-4" />
               </Link>
             </div>
 
             <div>
-              <p className={cn("text-[11px] font-semibold uppercase tracking-[0.3em]", light ? "text-emerald-950/34" : "text-mist-100/32")}>Navegacao</p>
+              <p className={cn("text-[11px] font-semibold uppercase tracking-[0.3em]", light ? "text-emerald-950/34" : "text-mist-100/32")}>Navegação</p>
               <div className={cn("mt-6 flex flex-col gap-3 text-sm", light ? "text-emerald-950/64" : "text-mist-100/60")}>
                 {marketingNavigation.map((item) => (
                   <Link className={cn("transition", light ? "hover:text-emerald-950" : "hover:text-white")} href={item.href} key={item.href}>
@@ -93,7 +93,7 @@ export function SiteFooter({
             </div>
 
             <div>
-              <p className={cn("text-[11px] font-semibold uppercase tracking-[0.3em]", light ? "text-emerald-950/34" : "text-mist-100/32")}>Servicos</p>
+              <p className={cn("text-[11px] font-semibold uppercase tracking-[0.3em]", light ? "text-emerald-950/34" : "text-mist-100/32")}>Serviços</p>
               <div className={cn("mt-6 grid gap-3 text-sm", light ? "text-emerald-950/64" : "text-mist-100/60")}>
                 {serviceLinks.map((service) => (
                   <Link className={cn("transition", light ? "hover:text-emerald-950" : "hover:text-white")} href={`/${service.slug}`} key={service.slug}>
@@ -109,7 +109,7 @@ export function SiteFooter({
                 <p>{email}</p>
                 <p>{phone}</p>
                 <p>{whatsapp}</p>
-                <p>Sao Paulo, Brasil</p>
+                <p>São Paulo, Brasil</p>
               </div>
             </div>
           </div>

@@ -44,7 +44,7 @@ export default function SobrePage() {
     <main>
       <PageHero
         aside="Acreditamos que marcas premium crescem quando estrategia, conteudo, execucao e experiencia digital trabalham na mesma direcao."
-        description="Somos uma agencia orientada a resultado, com mentalidade de produto e execucao full-service para marcas que querem crescer com mais maturidade."
+        description="Somos uma agência orientada a resultado, com leitura estratégica e execução full-service para marcas que querem crescer com mais maturidade."
         eyebrow="Sobre"
         title="Uma agencia construida para unir growth, conteudo, marca e operacao em um mesmo nivel de excelencia."
       />

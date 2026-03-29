@@ -152,7 +152,7 @@ export function LeadCaptureForm({
       if (!values.email.trim()) {
         nextErrors.email = "Informe seu email.";
       } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) {
-        nextErrors.email = "Email invalido.";
+        nextErrors.email = "Email inválido.";
       }
     }
 
@@ -166,7 +166,7 @@ export function LeadCaptureForm({
       }
 
       if (!values.urgency) {
-        nextErrors.urgency = "Selecione a urgencia.";
+        nextErrors.urgency = "Selecione a urgência.";
       }
 
       if (!values.contactPreference) {
@@ -362,7 +362,7 @@ export function LeadCaptureForm({
           </div>
 
           <div className="grid gap-3">
-            <p className={cn("text-sm font-semibold", theme === "dark" ? "text-white" : "text-ink-950")}>Urgencia do projeto</p>
+            <p className={cn("text-sm font-semibold", theme === "dark" ? "text-white" : "text-ink-950")}>Urgência do projeto</p>
             <div className="flex flex-wrap gap-3">
               {urgencyOptions.map((option) => {
                 const selected = values.urgency === option.value;
@@ -413,7 +413,7 @@ export function LeadCaptureForm({
           <Textarea
             className={fieldClassName}
             onChange={(event) => updateField("message", event.target.value)}
-            placeholder="Conte um pouco sobre o momento da empresa, os gargalos e o que voce quer destravar agora."
+            placeholder="Conte um pouco sobre o momento da empresa, os gargalos e o que você quer destravar agora."
             value={values.message}
           />
         </div>
@@ -474,7 +474,7 @@ export function LeadCaptureForm({
               )}
               size="lg"
             >
-              Solicitar diagnostico
+              Solicitar diagnóstico
             </SubmitButton>
           )}
         </div>

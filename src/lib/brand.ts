@@ -2,7 +2,7 @@ export const BRAND_NAME = "Ameni";
 export const BRAND_COMPANY_NAME = "Ameni Digital Marketing";
 export const BRAND_SLOGAN = "Amenize a complexidade potencialize seus resultados";
 export const BRAND_DESCRIPTION =
-  "A Ameni integra estrategia, performance, conteudo, web e automacao para reduzir complexidade, organizar a operacao e potencializar resultados.";
+  "A Ameni assume estratégia, tráfego, conteúdo, social media, web e posicionamento para reduzir complexidade e acelerar resultado com mais clareza.";
 
 const LEGACY_AGENCY_NAMES = new Set(["Atlas Growth Studio"]);
 const LEGACY_HERO_TITLES = new Set([
@@ -62,7 +62,7 @@ export function resolveHeroTitle(value?: string | null) {
 export function resolveHeroSubtitle(value?: string | null) {
   const normalized = replaceLegacyBrandReferences(value?.trim() ?? "");
   if (!normalized || LEGACY_HERO_SUBTITLES.has(normalized)) {
-    return "A Ameni integra estrategia, performance, conteudo, web e automacao para simplificar a operacao, reduzir ruido e acelerar resultados com mais clareza.";
+    return "A Ameni conduz tráfego pago, orgânico, social media, conteúdo, web e posicionamento para transformar marketing em uma operação mais clara, elegante e orientada a resultado.";
   }
 
   return normalized;
@@ -71,7 +71,7 @@ export function resolveHeroSubtitle(value?: string | null) {
 export function resolvePrimaryCta(value?: string | null) {
   const normalized = replaceLegacyBrandReferences(value?.trim() ?? "");
   if (!normalized || LEGACY_PRIMARY_CTAS.has(normalized)) {
-    return "Solicitar diagnostico";
+    return "Solicitar diagnóstico";
   }
 
   return normalized;
@@ -80,7 +80,7 @@ export function resolvePrimaryCta(value?: string | null) {
 export function resolveSecondaryCta(value?: string | null) {
   const normalized = replaceLegacyBrandReferences(value?.trim() ?? "");
   if (!normalized || LEGACY_SECONDARY_CTAS.has(normalized)) {
-    return "Agendar reuniao";
+    return "Agendar reunião";
   }
 
   return normalized;

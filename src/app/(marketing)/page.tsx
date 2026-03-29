@@ -15,9 +15,9 @@ import { getSectorCmsCatalog, getSiteContent } from "@/modules/site-content/repo
 export const metadata: Metadata = buildPageMetadata({
   title: "Ameni | Amenize a complexidade potencialize seus resultados",
   description:
-    "Ameni integra estrategia, performance, conteudo, web e automacao para transformar complexidade em clareza operacional e crescimento consistente.",
+    "Ameni integra estratégia, tráfego, conteúdo, social media, web e posicionamento para transformar complexidade em clareza e crescimento consistente.",
   path: "/",
-  keywords: ["ameni", "estrategia digital", "trafego pago", "branding", "landing pages", "automacao"],
+  keywords: ["ameni", "agência de marketing digital", "tráfego pago", "social media", "branding", "landing pages"],
 });
 
 export default async function HomePage() {

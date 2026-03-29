@@ -19,7 +19,7 @@ const items = [
     getHref: (...args: [string, string]) => buildCalendarEmbedUrl(args[1]) || "/contato#agenda",
   },
   {
-    label: "Diagnostico",
+    label: "Diagnóstico",
     icon: Send,
     getHref: () => "/contato",
   },
@@ -47,7 +47,7 @@ export function FloatingContactRail({
             href={item.getHref(whatsapp, calendarUrl)}
             key={item.label}
             rel="noreferrer"
-            target={item.label === "Diagnostico" ? undefined : "_blank"}
+            target={item.label === "Diagnóstico" ? undefined : "_blank"}
           >
             <span className={cn(
               "flex size-10 items-center justify-center rounded-full border transition",
@@ -75,7 +75,7 @@ export function FloatingContactRail({
               href={item.getHref(whatsapp, calendarUrl)}
               key={item.label}
               rel="noreferrer"
-              target={item.label === "Diagnostico" ? undefined : "_blank"}
+              target={item.label === "Diagnóstico" ? undefined : "_blank"}
             >
               <item.icon className={cn("size-4", light ? "text-emerald-700" : "text-jade-300")} />
               <span>{item.label}</span>

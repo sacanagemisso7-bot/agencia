@@ -52,14 +52,14 @@ export const demoSettings: SiteSettingsRecord = {
   agencyName: "Ameni",
   heroTitle: "Amenize a complexidade potencialize seus resultados",
   heroSubtitle:
-    "A Ameni integra estrategia, performance, conteudo, web e automacao para simplificar a operacao, reduzir ruido e acelerar resultados com mais clareza.",
-  primaryCta: "Solicitar diagnostico",
-  secondaryCta: "Agendar reuniao",
+    "A Ameni conduz tráfego pago, orgânico, social media, conteúdo, web e posicionamento para transformar marketing em uma operação mais clara, elegante e orientada a resultado.",
+  primaryCta: "Solicitar diagnóstico",
+  secondaryCta: "Agendar reunião",
   email: "contato@atlasgrowth.studio",
   phone: "+55 11 4000-1234",
   whatsapp: "+55 11 98888-0000",
-  calendarUrl: "https://calendly.com/atlasgrowth/diagnostico-estrategico",
-  calendarEmbedUrl: "https://calendly.com/atlasgrowth/diagnostico-estrategico",
+  calendarUrl: "",
+  calendarEmbedUrl: "",
   instagramUrl: "https://instagram.com/atlasgrowth.studio",
   linkedinUrl: "https://linkedin.com/company/atlas-growth-studio",
 };
@@ -67,33 +67,33 @@ export const demoSettings: SiteSettingsRecord = {
 export const demoServices: ServiceRecord[] = [
   {
     id: "svc_1",
-    name: "Gestao de trafego pago",
+    name: "Gestão de tráfego pago",
     slug: "gestao-de-trafego-pago",
-    description: "Planejamento de canais, setup tecnico, rotina de otimizacao e leitura executiva.",
-    benefit: "Mais previsibilidade de aquisicao e controle de CAC.",
+    description: "Planejamento de canais, setup técnico, rotina de otimização e leitura executiva.",
+    benefit: "Mais previsibilidade de aquisição e controle de CAC.",
     featured: true,
   },
   {
     id: "svc_2",
     name: "Landing pages e CRO",
     slug: "landing-pages-e-cro",
-    description: "Paginas de alta conversao, testes de oferta e melhoria continua da jornada.",
-    benefit: "Mais conversao sem necessariamente aumentar investimento.",
+    description: "Páginas de alta conversão, testes de oferta e melhoria contínua da jornada.",
+    benefit: "Mais conversão sem necessariamente aumentar investimento.",
     featured: true,
   },
   {
     id: "svc_3",
-    name: "Criativos e estrategia digital",
+    name: "Criativos e estratégia digital",
     slug: "criativos-e-estrategia-digital",
     description: "Criativos, ganchos, ofertas e direcionamento por etapa do funil.",
-    benefit: "Mensagens mais fortes e campanhas com maior aderencia.",
+    benefit: "Mensagens mais fortes e campanhas com maior aderência.",
   },
   {
     id: "svc_4",
-    name: "Funis e automacao comercial",
+    name: "Social media e operação de conteúdo",
     slug: "funis-e-automacao-comercial",
-    description: "Fluxos de qualificaÃ§Ã£o, follow-up e operacao assistida por IA.",
-    benefit: "Equipe mais produtiva e menos oportunidades perdidas.",
+    description: "Planejamento editorial, produção criativa, rotina de publicação e leitura executiva do que está gerando resposta.",
+    benefit: "Marca mais presente, operação mais consistente e comunicação mais alinhada ao comercial.",
   },
 ];
 
@@ -104,7 +104,7 @@ export const demoTestimonials: TestimonialRecord[] = [
     role: "CEO",
     company: "Derma Prime Clinic",
     quote:
-      "A agencia organizou nossa captacao premium, reduziu o CPL e nos deu um processo comercial muito mais claro.",
+      "A agência organizou nossa captação premium, reduziu o CPL e nos deu um processo comercial muito mais claro.",
     featured: true,
   },
   {
@@ -113,15 +113,15 @@ export const demoTestimonials: TestimonialRecord[] = [
     role: "Diretor Comercial",
     company: "MoveFit Studios",
     quote:
-      "Nao foi so trafego. Houve melhoria de oferta, mensagens, paginas e follow-ups. Virou uma maquina mais consistente.",
+      "Não foi só tráfego. Houve melhoria de oferta, mensagens, páginas e follow-ups. Virou uma máquina mais consistente.",
   },
   {
     id: "test_3",
     authorName: "Beatriz Nogueira",
-    role: "Socia",
+    role: "Sócia",
     company: "Nogueira Interiores",
     quote:
-      "O painel nos da visibilidade do que esta acontecendo e a IA agiliza muito os retornos comerciais.",
+      "A Ameni trouxe visibilidade, ritmo de execução e uma operação muito mais organizada entre campanha, conteúdo e comercial.",
   },
 ];
 
@@ -129,10 +129,10 @@ export const demoCaseStudies: CaseStudyRecord[] = [
   {
     id: "case_1",
     slug: "clinica-premium-com-agenda-mais-previsivel",
-    title: "Clinica premium com agenda mais previsivel",
-    niche: "Estetica",
-    challenge: "Leads inconsistentes e excesso de dependencia de indicacao.",
-    solution: "Reposicionamento da oferta, criativos novos, landing page e rotina comercial orientada por IA.",
+    title: "Clínica premium com agenda mais previsível",
+    niche: "Estética",
+    challenge: "Leads inconsistentes e excesso de dependência de indicação.",
+    solution: "Reposicionamento da oferta, criativos novos, landing page e rotina comercial mais bem estruturada.",
     result: "CPL 31% menor e aumento de 42% em consultas agendadas.",
     metrics: {
       consultas: "+42%",
@@ -144,11 +144,11 @@ export const demoCaseStudies: CaseStudyRecord[] = [
   {
     id: "case_2",
     slug: "loteamento-de-medio-alto-padrao-com-leads-qualificados",
-    title: "Loteamento de medio-alto padrao com leads qualificados",
-    niche: "Imobiliario",
+    title: "Loteamento de médio-alto padrão com leads qualificados",
+    niche: "Imobiliário",
     challenge: "Muito volume com pouca qualidade para o time de vendas.",
-    solution: "Segmentacao refinada, paginas por intencao e follow-up consultivo por etapa.",
-    result: "Melhora na qualificacao e 2,6x mais oportunidades reais.",
+    solution: "Segmentação refinada, páginas por intenção e follow-up consultivo por etapa.",
+    result: "Melhora na qualificação e 2,6x mais oportunidades reais.",
     metrics: {
       oportunidades: "2,6x",
       taxa_reuniao: "+37%",
@@ -161,21 +161,21 @@ export const demoFaqs: FAQRecord[] = [
     id: "faq_1",
     question: "Em quanto tempo os resultados costumam aparecer?",
     answer:
-      "Nos primeiros 30 dias estruturamos conta, dados, criativos e paginas. Ganhos mais consistentes costumam ser percebidos entre 45 e 90 dias.",
+      "Nos primeiros 30 dias estruturamos conta, dados, criativos e páginas. Ganhos mais consistentes costumam ser percebidos entre 45 e 90 dias.",
     order: 1,
   },
   {
     id: "faq_2",
-    question: "VocÃªs atuam so com midia paga?",
+    question: "Vocês atuam só com mídia paga?",
     answer:
-      "Nao. A proposta inclui oferta, criativos, landing pages, CRM, follow-up e IA comercial quando faz sentido para o projeto.",
+      "Não. A Ameni pode atuar com tráfego pago, orgânico, social media, criativos, vídeo, landing pages e posicionamento, conforme o momento da marca.",
     order: 2,
   },
   {
     id: "faq_3",
-    question: "A agencia atende negocios high-ticket?",
+    question: "A agência atende negócios high-ticket?",
     answer:
-      "Sim. A operacao foi desenhada para servicos, clinicas, mercado imobiliario, educacao premium e negocios com ciclo comercial mais consultivo.",
+      "Sim. A operação foi desenhada para serviços, clínicas, mercado imobiliário, educação premium e negócios com ciclo comercial mais consultivo.",
     order: 3,
   },
 ];
@@ -205,16 +205,16 @@ export const demoBlogPosts: BlogPostRecord[] = [
 
 export const demoMethodologyContent: MethodologyContentRecord = {
   heroEyebrow: "Metodologia",
-  heroTitle: "Um metodo para reduzir complexidade, organizar prioridades e transformar marketing em resultado.",
+  heroTitle: "Um método para reduzir complexidade, organizar prioridades e transformar marketing em resultado.",
   heroDescription:
-    "Nosso metodo combina leitura de negocio, criacao com criterio, execucao disciplinada e melhoria continua para transformar marketing em sistema de crescimento.",
+    "Nosso método combina leitura de negócio, criação com critério, execução disciplinada e melhoria contínua para transformar marketing em resultado consistente.",
   heroAside:
     "A metodologia existe para evitar o erro mais comum de operacoes digitais: anuncios desconectados da marca, conteudo desconectado do comercial e uma experiencia digital que nao sustenta o valor vendido.",
-  processTitle: "Como a metodologia se traduz em execucao real.",
+  processTitle: "Como a metodologia se traduz em execução real.",
   processDescription:
     "Esse processo foi desenhado para aumentar qualidade de decisao, ritmo operacional e coerencia entre marca e resultado.",
   impactEyebrow: "O que muda na pratica",
-  impactTitle: "Menos canais soltos. Mais sistema.",
+  impactTitle: "Menos canais soltos. Mais direção.",
   impactBody: [
     "Quando a metodologia entra, o marketing deixa de ser uma soma de tarefas e passa a operar como estrutura: oferta mais clara, criativos melhores, paginas mais coerentes, social com direcao, SEO com funcao e uma rotina comercial com mais contexto.",
     "Esse tipo de integracao aumenta eficiencia, melhora valor percebido e cria base para escalar com menos improviso.",
@@ -258,18 +258,18 @@ export const demoMethodologyContent: MethodologyContentRecord = {
 
 export const demoProofAssetsContent: ProofAssetsContentRecord = {
   eyebrow: "Prova visual",
-  title: "Nao mostramos so frases bonitas. Mostramos estrutura, criacao e leitura de operacao.",
+  title: "Não mostramos só frases bonitas. Mostramos estratégia, criação e leitura de operação.",
   description:
-    "A prova social mais forte para uma agencia premium nao e apenas o depoimento. E a combinacao entre contexto, captura de resultado, criativo e experiencia digital.",
+    "A prova social mais forte para uma agência premium não é apenas o depoimento. É a combinação entre contexto, captura de resultado, criativo e experiência digital.",
   logos: ["Nova Med", "Orion Prime", "Haus Capital", "Clarear Educacao", "Vista Health"],
   features: [
     {
-      title: "Dashboards executivos",
-      description: "CAC, CPL, show rate, receita e sinais de funil traduzidos em decisao.",
+      title: "Relatórios executivos",
+      description: "CAC, CPL, show rate, receita e sinais de funil traduzidos pela Ameni em decisão.",
     },
     {
-      title: "Criativos orientados a resposta",
-      description: "Reels, VSLs curtas, UGC premium e anuncios com criterio de conversao.",
+      title: "Criativos orientados à resposta",
+      description: "Reels, VSLs curtas, UGC premium e anúncios com critério de conversão.",
     },
     {
       title: "Landing pages de campanha",

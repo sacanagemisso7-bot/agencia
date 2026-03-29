@@ -6,22 +6,51 @@ import { env } from "@/lib/env";
 const siteName = getBrandName();
 const defaultDescription = getBrandDescription();
 const fallbackBaseUrl = "http://localhost:3000";
+const baseUrlCandidates = [
+  process.env.NEXT_PUBLIC_APP_URL,
+  process.env.VERCEL_PROJECT_PRODUCTION_URL,
+  process.env.VERCEL_BRANCH_URL,
+  process.env.VERCEL_URL,
+  env.appUrl,
+];
 
 function normalizeBaseUrl(url: string) {
   return url.endsWith("/") ? url.slice(0, -1) : url;
 }
 
-function resolveBaseUrl(value: string) {
+function parseBaseUrl(value: string) {
   const trimmed = value.trim();
-  const candidate = trimmed
-    ? normalizeBaseUrl(trimmed.includes("://") ? trimmed : `https://${trimmed}`)
-    : fallbackBaseUrl;
+  if (!trimmed) {
+    return null;
+  }
+
+  const withProtocol = trimmed.includes("://")
+    ? trimmed
+    : trimmed.startsWith("localhost") || trimmed.startsWith("127.0.0.1")
+      ? `http://${trimmed}`
+      : `https://${trimmed}`;
+  const candidate = normalizeBaseUrl(withProtocol);
 
   try {
     return new URL(candidate);
   } catch {
-    return new URL(fallbackBaseUrl);
+    return null;
   }
+}
+
+function resolveBaseUrl() {
+  for (const candidate of baseUrlCandidates) {
+    if (!candidate) {
+      continue;
+    }
+
+    const parsed = parseBaseUrl(candidate);
+    if (parsed) {
+      return parsed;
+    }
+  }
+
+  return new URL(fallbackBaseUrl);
 }
 
 export function getSiteName() {
@@ -29,7 +58,7 @@ export function getSiteName() {
 }
 
 export function getMetadataBase() {
-  return resolveBaseUrl(env.appUrl);
+  return resolveBaseUrl();
 }
 
 export function getAbsoluteUrl(path = "/") {

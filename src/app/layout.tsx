@@ -24,7 +24,7 @@ const fraunces = Fraunces({
 export const metadata: Metadata = buildPageMetadata({
   title: "Ameni | Amenize a complexidade potencialize seus resultados",
   description:
-    "Ameni integra estrategia, performance, conteudo, web e automacao para reduzir complexidade, organizar a operacao e potencializar resultados.",
+    "Ameni integra estratégia, tráfego, conteúdo, social media, web e posicionamento para reduzir complexidade e potencializar resultados.",
   path: "/",
 });
 

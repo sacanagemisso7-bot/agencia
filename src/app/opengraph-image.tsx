@@ -123,7 +123,7 @@ export default function OpenGraphImage() {
                   letterSpacing: "0.16em",
                 }}
               >
-                Clareza | Operacao | Resultado
+                Estratégia | Tráfego | Resultado
               </div>
             </div>
 

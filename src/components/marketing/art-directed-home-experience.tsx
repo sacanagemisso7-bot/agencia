@@ -275,7 +275,7 @@ export function ArtDirectedHomeExperience({
                 )} />
                 <div className="relative">
                   <div className="flex items-center justify-between gap-4">
-                    <p className={cn("text-[10px] uppercase tracking-[0.34em]", themeSubtle)}>live growth board</p>
+                    <p className={cn("text-[10px] uppercase tracking-[0.34em]", themeSubtle)}>visão executiva</p>
                     <Orbit className={cn("size-4", themeAccent)} />
                   </div>
 
@@ -301,7 +301,7 @@ export function ArtDirectedHomeExperience({
                   </div>
 
                   <p className={cn("mt-10 max-w-[22ch] text-sm leading-7", themeMuted)}>
-                    Growth. Precision. Web. Content. One direction.
+                    Tráfego. Conteúdo. Web. Marca. Uma direção.
                   </p>
                 </div>
               </div>
@@ -324,18 +324,18 @@ export function ArtDirectedHomeExperience({
       <section className="container-shell relative py-24 sm:py-32">
         <div className="grid gap-14 lg:grid-cols-[0.52fr_1.48fr] lg:items-start">
           <div className="space-y-6">
-            <p className={cn("text-[10px] uppercase tracking-[0.34em]", themeSubtle)}>not a stack. a system.</p>
+            <p className={cn("text-[10px] uppercase tracking-[0.34em]", themeSubtle)}>não é pacote. é direção.</p>
             <p className={cn("max-w-xs text-sm leading-7", themeMuted)}>
-              Menos ruido. Menos camada desnecessaria. Mais leitura. Mais tracao.
+              Menos ruído. Menos camada desnecessária. Mais leitura. Mais tração.
             </p>
           </div>
 
           <div>
             <p className={cn("text-[15vw] font-display leading-[0.84] tracking-[-0.1em] sm:text-[5.6rem] lg:text-[9rem]", themeText)}>
-              Noise out.
+              Ruído out.
             </p>
             <p className="ameni-home-outline ml-[10vw] text-[14vw] font-display leading-[0.84] tracking-[-0.1em] sm:text-[5rem] lg:text-[8rem]">
-              Signal in.
+              Clareza in.
             </p>
 
             <div className="mt-16 grid gap-4 lg:grid-cols-3">
@@ -362,7 +362,7 @@ export function ArtDirectedHomeExperience({
       <section className="container-shell relative py-24 sm:py-32" id="servicos">
         <div className="grid gap-16 lg:grid-cols-[0.78fr_1.22fr]">
           <div className="lg:sticky lg:top-28 lg:self-start">
-            <p className={cn("text-[10px] uppercase tracking-[0.34em]", themeSubtle)}>service spectrum</p>
+            <p className={cn("text-[10px] uppercase tracking-[0.34em]", themeSubtle)}>frentes</p>
             <div className={cn("ameni-home-cut-b relative mt-8 overflow-hidden p-6 sm:p-8", themePanel)}>
               <div className={cn(
                 "pointer-events-none absolute inset-0",
@@ -404,7 +404,7 @@ export function ArtDirectedHomeExperience({
                   data-cursor-label="servico"
                   href={`/${activeService.slug}`}
                 >
-                  Explorar frente
+                  Explorar serviço
                   <ChevronRight className="size-4" />
                 </Link>
               </div>
@@ -546,9 +546,9 @@ export function ArtDirectedHomeExperience({
       <section className="container-shell relative py-24 sm:py-32">
         <div className="grid gap-16 lg:grid-cols-[0.72fr_1.28fr]">
           <div>
-            <p className={cn("text-[10px] uppercase tracking-[0.34em]", themeSubtle)}>one direction. six moves.</p>
+            <p className={cn("text-[10px] uppercase tracking-[0.34em]", themeSubtle)}>uma direção. seis frentes.</p>
             <p className={cn("mt-6 max-w-[12ch] font-display text-[clamp(3rem,7vw,6rem)] leading-[0.88] tracking-[-0.08em]", themeText)}>
-              Directed. Not assembled.
+              Dirigida. Não empilhada.
             </p>
 
             {leadTestimonial ? (
@@ -594,12 +594,12 @@ export function ArtDirectedHomeExperience({
       <section className="container-shell relative py-24 sm:py-32">
         <div className="grid gap-16 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
           <div>
-            <p className={cn("text-[10px] uppercase tracking-[0.34em]", themeSubtle)}>entry point</p>
+            <p className={cn("text-[10px] uppercase tracking-[0.34em]", themeSubtle)}>primeiro passo</p>
             <p className={cn("mt-6 max-w-[10ch] font-display text-[clamp(3.6rem,8vw,7rem)] leading-[0.86] tracking-[-0.08em]", themeText)}>
-              Less noise. More result.
+              Menos ruído. Mais resultado.
             </p>
             <p className={cn("mt-6 max-w-sm text-sm leading-7", themeMuted)}>
-              Diagnostico estrategico. Leitura direta. Proximo movimento claro.
+              Diagnóstico estratégico. Leitura direta. Próximo movimento claro.
             </p>
 
             <div className="mt-12 space-y-2">
@@ -649,14 +649,14 @@ export function ArtDirectedHomeExperience({
             <div className="relative">
               <div className="mb-8 flex items-center justify-between gap-4">
                 <div>
-                  <p className={cn("text-[10px] uppercase tracking-[0.3em]", themeSubtle)}>strategic entry</p>
+                  <p className={cn("text-[10px] uppercase tracking-[0.3em]", themeSubtle)}>entrada estratégica</p>
                   <p className={cn("mt-3 max-w-[18ch] font-display text-3xl leading-[0.96] tracking-[-0.05em]", themeText)}>
                     Entre pelo ponto certo.
                   </p>
                 </div>
                 <Sparkles className={cn("size-5", themeAccent)} />
               </div>
-              <LeadCaptureForm defaultServiceInterest="Diagnostico estrategico" theme={light ? "light" : "dark"} />
+              <LeadCaptureForm defaultServiceInterest="Diagnóstico estratégico" theme={light ? "light" : "dark"} />
             </div>
           </div>
         </div>
