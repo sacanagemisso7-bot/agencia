@@ -112,48 +112,58 @@ export async function getSiteContent(): Promise<SiteContentBundle> {
 
       return {
         settings: normalizeSiteSettings(mappedSettings),
-        services: services.map((service) => ({
-          id: service.id,
-          name: service.name,
-          slug: service.slug,
-          description: service.description,
-          benefit: service.benefit,
-          featured: service.featured,
-        })),
-        testimonials: testimonials.map((testimonial) => ({
-          id: testimonial.id,
-          authorName: testimonial.authorName,
-          role: testimonial.role,
-          company: testimonial.company,
-          quote: testimonial.quote,
-          featured: testimonial.featured,
-        })),
-        caseStudies: caseStudies.map((caseStudy) => ({
-          id: caseStudy.id,
-          slug: slugify(caseStudy.title),
-          title: caseStudy.title,
-          niche: caseStudy.niche,
-          challenge: caseStudy.challenge,
-          solution: caseStudy.solution,
-          result: caseStudy.result,
-          metrics: (caseStudy.metrics ?? {}) as Record<string, string | number>,
-          featured: caseStudy.featured,
-        })),
-        faqs: faqs.map((faq) => ({
-          id: faq.id,
-          question: faq.question,
-          answer: faq.answer,
-          order: faq.order,
-        })),
-        blogPosts: blogPosts.map((post) => ({
-          id: post.id,
-          title: post.title,
-          slug: post.slug,
-          excerpt: post.excerpt,
-          content: post.content,
-          category: post.category,
-          publishedAt: post.publishedAt?.toISOString(),
-        })),
+        services: services.length
+          ? services.map((service) => ({
+              id: service.id,
+              name: service.name,
+              slug: service.slug,
+              description: service.description,
+              benefit: service.benefit,
+              featured: service.featured,
+            }))
+          : demoStore.services,
+        testimonials: testimonials.length
+          ? testimonials.map((testimonial) => ({
+              id: testimonial.id,
+              authorName: testimonial.authorName,
+              role: testimonial.role,
+              company: testimonial.company,
+              quote: testimonial.quote,
+              featured: testimonial.featured,
+            }))
+          : demoStore.testimonials,
+        caseStudies: caseStudies.length
+          ? caseStudies.map((caseStudy) => ({
+              id: caseStudy.id,
+              slug: slugify(caseStudy.title),
+              title: caseStudy.title,
+              niche: caseStudy.niche,
+              challenge: caseStudy.challenge,
+              solution: caseStudy.solution,
+              result: caseStudy.result,
+              metrics: (caseStudy.metrics ?? {}) as Record<string, string | number>,
+              featured: caseStudy.featured,
+            }))
+          : demoStore.caseStudies,
+        faqs: faqs.length
+          ? faqs.map((faq) => ({
+              id: faq.id,
+              question: faq.question,
+              answer: faq.answer,
+              order: faq.order,
+            }))
+          : demoStore.faqs,
+        blogPosts: blogPosts.length
+          ? blogPosts.map((post) => ({
+              id: post.id,
+              title: post.title,
+              slug: post.slug,
+              excerpt: post.excerpt,
+              content: post.content,
+              category: post.category,
+              publishedAt: post.publishedAt?.toISOString(),
+            }))
+          : demoStore.blogPosts,
         methodology: normalizeMethodologyContent(mappedMethodology),
         proofAssets: normalizeProofAssetsContent(mappedProofAssets),
       };
