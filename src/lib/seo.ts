@@ -6,6 +6,7 @@ import { env } from "@/lib/env";
 const siteName = getBrandName();
 const defaultDescription = getBrandDescription();
 const fallbackBaseUrl = "http://localhost:3000";
+const fallbackProductionBaseUrl = "https://agencia-gustavos-projects-99423559.vercel.app";
 const baseUrlCandidates = [
   process.env.NEXT_PUBLIC_APP_URL,
   process.env.VERCEL_PROJECT_PRODUCTION_URL,
@@ -50,7 +51,7 @@ function resolveBaseUrl() {
     }
   }
 
-  return new URL(fallbackBaseUrl);
+  return new URL(process.env.NODE_ENV === "production" ? fallbackProductionBaseUrl : fallbackBaseUrl);
 }
 
 export function getSiteName() {
